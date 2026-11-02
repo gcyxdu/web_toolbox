@@ -1,0 +1,127 @@
+.metrics-panel {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-top: 16px;
+}
+.metric-charts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  padding: 16px 0 0;
+}
+.chart-panel {
+  min-width: 0;
+  padding: 0 14px;
+}
+.chart-panel + .chart-panel {
+  border-left: 1px solid #edf1f3;
+}
+.chart-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 9px;
+  padding: 0 3px 5px;
+}
+.chart-heading > span {
+  font-size: 14px;
+  color: #5e727e;
+}
+.chart-heading strong {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 16px;
+  letter-spacing: -0.6px;
+  font-weight: 450;
+}
+.chart-heading strong svg {
+  color: var(--accent);
+}
+.chart-heading select {
+  font-size: 14px;
+  max-width: 140px;
+  border: 0;
+  color: #5e727e;
+  background: transparent;
+  padding: 0 13px 0 0;
+  cursor: pointer;
+}
+.line-chart {
+  height: 180px;
+  min-width: 0;
+}
+.chart-empty {
+  height: 180px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: #85969f;
+  background: transparent;
+  text-align: center;
+}
+.chart-empty > span {
+  font-size: 14px;
+  color: #607681;
+}
+.chart-empty > small {
+  font-size: 13px;
+  color: var(--muted);
+}
+.chart-empty > svg {
+  color: #b7c8cf;
+}
+.metrics-footnote {
+  font-size: 13px;
+  color: var(--muted);
+  padding: 9px 17px 11px;
+  border-top: 1px solid #f0f3f5;
+  line-height: 1.7;
+}
+.metrics-footnote .meta-separator {
+  height: 8px;
+  margin: 0 6px;
+}
+.event-log {
+  height: 225px;
+  overflow: auto;
+  padding: 7px 17px;
+}
+.event-row {
+  display: grid;
+  grid-template-columns: 60px 70px 1fr auto;
+  gap: 10px;
+  align-items: center;
+  border-bottom: 1px solid #f1f4f5;
+  padding: 10px 0;
+  font-size: 14px;
+}
+.event-row > span {
+  color: var(--muted);
+}
+.event-row strong {
+  font-weight: 450;
+}
+.event-row .mono {
+  font-size: 13px;
+}
+.comparison-charts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin: 26px 0 23px;
+  gap: 28px;
+}
+.comparison-charts h3 {
+  font-size: 15px;
+  font-weight: 550;
+  margin-bottom: 12px;
+}
+.comparison-charts .line-chart {
+  height: 250px;
+}
+.comparison-charts > div {
+  min-width: 0;
+}

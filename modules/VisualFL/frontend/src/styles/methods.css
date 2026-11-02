@@ -1,0 +1,141 @@
+.method-columns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+  flex: 1;
+  min-height: 0;
+}
+.method-column {
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #e5ebf0;
+  border-radius: 12px;
+  padding: 0 20px;
+  background: #fff;
+}
+.method-column-heading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 72px;
+  flex-shrink: 0;
+  border-bottom: 1px solid #e9eef2;
+}
+.method-heading-icon {
+  display: grid;
+  place-items: center;
+  color: #6c8cae;
+}
+.method-column-attack .method-heading-icon {
+  color: #bf8075;
+}
+.method-column-heading h2 {
+  font-size: 17px;
+  font-weight: 600;
+}
+.method-count {
+  margin-left: auto;
+  font-size: 12px;
+  color: #8996a1;
+}
+.method-column .method-list {
+  min-height: 0;
+  flex: 1;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+.method-column .method-row {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 12px;
+  padding: 23px 0;
+  border-bottom: 1px solid #edf1f4;
+}
+.method-column .method-row:last-child {
+  border-bottom: 0;
+}
+.method-symbol {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  background: #f3f6f9;
+  color: #7891a6;
+  border-radius: 9px;
+}
+.method-column-attack .method-symbol {
+  color: #b9867d;
+  background: #fcf4f1;
+}
+.method-description strong {
+  display: block;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+.method-description p {
+  font-size: 14px;
+  color: #667987;
+  margin-top: 7px;
+  line-height: 1.8;
+}
+.method-description small {
+  display: block;
+  font-size: 12px;
+  color: #95a0aa;
+  margin-top: 7px;
+  line-height: 1.7;
+}
+.method-column .method-row > .rt-Button {
+  margin: 0 !important;
+  font-size: 13px;
+  align-self: start;
+}
+@media (max-width: 1050px) {
+  .method-columns {
+    gap: 16px;
+  }
+  .method-column {
+    padding: 0 14px;
+  }
+  .method-column .method-row {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+  .method-symbol {
+    display: none;
+  }
+}
+@media (max-width: 760px) {
+  .app-shell .main-content > .methods-panel {
+    overflow-y: auto;
+  }
+  .method-columns {
+    grid-template-columns: 1fr;
+    flex: none;
+  }
+  .method-column .method-list {
+    overflow: visible;
+  }
+  .method-column .method-row {
+    grid-template-columns: 34px minmax(0, 1fr) auto;
+  }
+  .method-symbol {
+    display: grid;
+  }
+}
+
+.method-apply {
+  box-shadow: inset 0 0 0 1px #dde6eb;
+  background: #fafcfd;
+  border-radius: 6px;
+  padding: 0 10px;
+  height: 30px;
+  color: #5a727c;
+}
+.method-apply:hover {
+  background: #edf5f2;
+  color: #2c6d62;
+}

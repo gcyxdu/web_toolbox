@@ -1,0 +1,47 @@
+.topology-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 11px 16px;
+  font-size: 13px;
+  color: #667984;
+  background: #fff;
+  border-top: 1px solid var(--border);
+}
+.topology-footer .meta-separator {
+  margin: 0 7px;
+  height: 8px;
+}
+.client-grid {
+  min-height: 385px;
+  max-height: 500px;
+  overflow: auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(135px, 1fr));
+  gap: 10px;
+  padding: 18px;
+  align-content: start;
+}
+.client-grid > button {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 7px;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 12px;
+}
+.client-grid > button.selected {
+  border-color: var(--accent);
+  background: #f1f7f4;
+}
+.client-grid strong {
+  font-size: 14px;
+  font-weight: 550;
+}
+.client-grid span,
+.client-grid small {
+  font-size: 14px;
+  color: var(--muted);
+}

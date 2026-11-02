@@ -1,0 +1,54 @@
+@media (min-width: 640px) {
+  .compare-panel {
+    gap: 13px;
+  }
+  .compare-panel .compare-picker {
+    margin: 0;
+    max-height: 104px;
+    overflow: auto;
+    flex-shrink: 0;
+    gap: 8px;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  }
+  .compare-panel .compare-picker > label {
+    padding: 10px 12px;
+    font-size: 15px;
+  }
+  .compare-panel .comparison-charts {
+    flex: 1;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+  }
+  .comparison-charts > div {
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .comparison-charts h3 {
+    font-size: 16px;
+    margin: 4px 0 7px;
+  }
+  .compare-panel .line-chart,
+  .compare-panel .chart-empty {
+    flex: 1;
+    min-height: 90px;
+    height: auto !important;
+  }
+  .compare-panel .table-scroll {
+    max-height: 190px;
+    flex-shrink: 0;
+  }
+  .compare-panel .runs-table td {
+    padding-top: 11px;
+    padding-bottom: 11px;
+  }
+  .compare-panel .runs-table th {
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+  .compare-panel .rt-CalloutRoot {
+    flex-shrink: 0;
+  }
+}

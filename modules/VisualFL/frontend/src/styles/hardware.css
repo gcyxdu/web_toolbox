@@ -1,0 +1,112 @@
+.system-dialog {
+  max-height: 88dvh;
+  overflow: auto;
+}
+.system-dialog .rt-DialogTitle {
+  font-size: 23px;
+}
+.system-dialog .rt-TabsList {
+  margin-top: 18px;
+}
+.system-dialog .rt-TabsTrigger {
+  font-size: 16px;
+}
+.hardware-panel {
+  padding-top: 16px;
+}
+.hardware-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  color: var(--muted);
+  font-size: 14px;
+}
+.hardware-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 17px 0;
+  border-bottom: 1px solid var(--border);
+}
+.hardware-item > svg {
+  flex-shrink: 0;
+  margin-top: 3px;
+  color: #65817b;
+}
+.hardware-item > div {
+  min-width: 0;
+}
+.hardware-item h3 {
+  font-size: 15px;
+  color: #526d78;
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+.hardware-item strong {
+  display: block;
+  font-size: 16px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+.hardware-item p {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.6;
+  margin-top: 4px;
+}
+.gpu-entry + .gpu-entry {
+  margin-top: 12px;
+}
+.training-device {
+  margin-top: 18px;
+  padding: 14px 16px;
+  background: #f0f6f3;
+  border: 1px solid #dce8e2;
+  border-radius: 7px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px 12px;
+}
+.training-device > span {
+  font-size: 15px;
+}
+.training-device > strong {
+  font-size: 16px;
+  color: var(--accent);
+}
+.training-device > p {
+  grid-column: 1 / -1;
+  font-size: 14px;
+  line-height: 1.7;
+  color: #566e65;
+}
+.runtime-details {
+  display: grid;
+  gap: 12px;
+  margin: 20px 0 0;
+  font-size: 14px;
+}
+.runtime-details > div {
+  display: grid;
+  grid-template-columns: 90px 1fr;
+  gap: 12px;
+}
+.runtime-details dt {
+  color: var(--muted);
+}
+.runtime-details dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.hardware-loading {
+  padding: 40px 0;
+  color: var(--muted);
+  font-size: 15px;
+  text-align: center;
+}
+.hardware-error {
+  color: #a34d3e;
+  font-size: 14px;
+  margin: 16px 0;
+}

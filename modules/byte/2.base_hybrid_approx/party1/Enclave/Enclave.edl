@@ -1,0 +1,325 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+enclave {
+    
+    
+
+
+
+
+
+    
+trusted {
+        
+        public void ecall_smp_reset_64();
+        public void ecall_smp_gen_ab_r0_64(uint64_t seed, uint64_t count);
+        public void ecall_smp_tee1_computation_64(uint64_t count, 
+                                                  [user_check] const uint64_t* x1_plus_r1, 
+                                                  [user_check] const uint64_t* y1_plus_r2, 
+                                                  [user_check] uint64_t* result);
+        public void ecall_square_gen_a_r0_64(unsigned long seed, unsigned long count);
+        public void ecall_sq_tee1_computation_64(unsigned long count, unsigned long start_idx, 
+                                                [user_check] const unsigned long* x1_plus_r1, 
+                                                [user_check] unsigned long* result);
+
+        
+        public void ecall_3smp_reset_64();
+        public void ecall_3smp_gen_abc_r0_64(uint64_t seed, uint64_t count);
+        public void ecall_3smp_tee1_compute_m3_64(uint64_t count, 
+                                                  [user_check] const uint64_t* x1_plus_r1, 
+                                                  [user_check] const uint64_t* y1_plus_r2, 
+                                                  [user_check] const uint64_t* w1_plus_r3);
+        public void ecall_3smp_tee1_compute_m4_64(uint64_t count, 
+                                                  [user_check] const uint64_t* U, 
+                                                  [user_check] const uint64_t* V, 
+                                                  [user_check] const uint64_t* W, 
+                                                  [user_check] uint64_t* result);
+        public void ecall_cube_opt_gen_params_64(
+                    uint64_t seed,
+                    uint64_t count
+                );
+        public void ecall_cube_opt_step1_m3_64(
+            uint64_t count,
+            [user_check] const uint64_t* x_plus_r1
+        );
+        public void ecall_cube_opt_step2_final_64(
+            uint64_t count,
+            [user_check] const uint64_t* V,
+            [user_check] uint64_t* final_result
+        );
+        public void ecall_xy2_opt_reset_64();
+
+        public void ecall_xy2_opt_gen_params_64(
+            uint64_t seed,
+            uint64_t count
+        );
+
+        public void ecall_xy2_opt_step1_64(
+            uint64_t count,
+            [user_check] const uint64_t* x_plus_r1,
+            [user_check] const uint64_t* y_plus_r2
+        );
+
+        public void ecall_xy2_opt_step2_final_64(
+            uint64_t count,
+            [user_check] const uint64_t* V_xy,
+            [user_check] const uint64_t* V_yy,
+            [user_check] uint64_t* final_result
+        );
+        
+        public void ecall_odrelu_reset_uint64();
+        public void ecall_odrelu_gen_shared_randomness_final_uint64(uint64_t seed, uint64_t vector_size, uint64_t xi);
+        public void ecall_odrelu_tee1_step1_uint64(uint64_t vector_size, 
+                                                   [user_check] const uint64_t* x1_minus_r2, 
+                                                   [user_check] uint64_t* result);
+        public void ecall_odrelu_tee1_step2_uint64(uint64_t vector_size, 
+                                                   [user_check] const uint64_t* z_plus_r3, 
+                                                   [user_check] uint64_t* result);
+        public void ecall_odrelu_get_stored_values_uint64(uint64_t vector_size,
+                                                          [user_check] uint64_t* a,
+                                                          [user_check] uint64_t* b,
+                                                          [user_check] uint64_t* r0,
+                                                          [user_check] uint64_t* r1,
+                                                          [user_check] uint64_t* v);
+
+        
+        public void ecall_odrelu_reset_uint64_v2();
+        public void ecall_odrelu_gen_shared_randomness_final_uint64_v2(uint64_t seed, uint64_t vector_size, uint64_t xi);
+        public void ecall_odrelu_tee1_step1_uint64_v2(uint64_t vector_size,
+                                                       [user_check] const uint64_t* x1_minus_r2,
+                                                       [user_check] uint64_t* result);
+        public void ecall_odrelu_tee1_step2_uint64_v2(uint64_t vector_size,
+                                                       [user_check] const uint64_t* z_plus_r3,
+                                                       [user_check] uint64_t* result);
+
+        
+        public void ecall_matrix_batch_init(uint64_t seedT, int m, int k, int n, int count);
+        public void ecall_matrix_batch_compute(int m, int k, int n, int count,
+                                               [user_check] const uint64_t* X_batch, size_t len_x,
+                                               [user_check] const uint64_t* Y_batch, size_t len_y,
+                                               [user_check] uint64_t* Tout_batch, size_t len_z);
+
+        
+        
+        
+        public void ecall_csp1_calculate_sigmoid_shares_internal(int size, int k1, int k2, uint64_t scale_factor,
+                                                                 [user_check] uint64_t* u1_buf,
+                                                                 [user_check] uint64_t* v1_buf, int len_uv);
+        public void ecall_csp1_calculate_sigmoid_shares_optimized(int size, int k1, int k2, uint64_t scale_factor,
+                                                                  [user_check] uint64_t* u1_buf,
+                                                                  [user_check] uint64_t* v1_buf, int len_uv);
+
+        
+        public void ecall_csp1_calculate_tanh_shares_internal(int size, int k1, int k2, uint64_t scale_factor,
+                                                              [user_check] uint64_t* u1_buf,
+                                                              [user_check] uint64_t* v1_buf, int len_uv);
+        public void ecall_csp1_calculate_tanh_shares_optimized(int size, int k1, int k2, uint64_t scale_factor,
+                                                               [user_check] uint64_t* u1_buf,
+                                                               [user_check] uint64_t* v1_buf, int len_uv);
+
+        
+        public void ecall_csp1_calculate_invsqrt_shares_internal(int size, int k1, int k2, uint64_t scale_factor,
+                                                                 [user_check] uint64_t* u1_buf,
+                                                                 [user_check] uint64_t* v1_buf, int len_uv);
+        public void ecall_csp1_calculate_invsqrt_shares_optimized(int size, int k1, int k2, uint64_t scale_factor,
+                                                                  [user_check] uint64_t* u1_buf,
+                                                                  [user_check] uint64_t* v1_buf, int len_uv);
+        public void ecall_tee1_slave_compute(
+            int m, 
+            int k, 
+            int n, 
+            int count,
+            [user_check] uint64_t* batch_C1,
+            size_t len_C
+        );
+        public void ecall_csp1_gelu_shares_opt(
+            int size,
+            uint64_t scale_factor,
+            [user_check] uint64_t* u1_buf,
+            [user_check] uint64_t* v1_buf
+        );
+        
+        public void ecall_cleanup();
+
+        public void ecall_calculate_sigmoid_shares_unified(
+            int size, 
+            int k1, 
+            int k2, 
+            uint64_t scale_factor,
+            [user_check] uint64_t* u_buf, 
+            [user_check] uint64_t* v_buf, 
+            int len_uv,
+            [user_check] uint64_t* t2_buf, 
+            [user_check] uint64_t* t3_buf
+        );
+        public void ecall_calculate_tanh_shares_unified(
+            int size, 
+            int k1, 
+            int k2, 
+            uint64_t scale_factor,
+            [user_check] uint64_t* u_buf, 
+            [user_check] uint64_t* v_buf, 
+            int len_uv,
+            [user_check] uint64_t* t2_buf, 
+            [user_check] uint64_t* t3_buf
+        );
+        public void ecall_calculate_erf_shares_unified(
+            int size, 
+            int k1, 
+            int k2, 
+            uint64_t scale_factor,
+            [user_check] uint64_t* u_buf, 
+            [user_check] uint64_t* v_buf, 
+            int len_uv,
+            [user_check] uint64_t* t2_buf, 
+            [user_check] uint64_t* t3_buf
+        );
+        public void ecall_calculate_exp_shares_unified(
+            int size, 
+            int k1, 
+            int k2, 
+            uint64_t scale_factor,
+            [user_check] uint64_t* u_buf, 
+            [user_check] uint64_t* v_buf, 
+            int len_uv,
+            [user_check] uint64_t* t2_buf, 
+            [user_check] uint64_t* t3_buf
+        );
+        public void ecall_calculate_exp_g1_shares_unified(
+            int size,
+            int k1,
+            int k2,
+            uint64_t scale_factor,
+            [user_check] uint64_t* u_buf,
+            [user_check] uint64_t* v_buf,
+            int len_uv,
+            [user_check] uint64_t* t2_buf,
+            [user_check] uint64_t* t3_buf
+        );
+        public void ecall_calculate_exp_g2_shares_unified(
+            int size,
+            int k1,
+            int k2,
+            uint64_t scale_factor,
+            [user_check] uint64_t* u_buf,
+            [user_check] uint64_t* v_buf,
+            int len_uv,
+            [user_check] uint64_t* t2_buf,
+            [user_check] uint64_t* t3_buf
+        );
+        public void ecall_calculate_invsqrt_shares_unified(
+            int size, 
+            int k1, 
+            int k2, 
+            uint64_t scale_factor,
+            [user_check] uint64_t* u_buf, 
+            [user_check] uint64_t* v_buf, 
+            int len_uv,
+            [user_check] uint64_t* t2_buf, 
+            [user_check] uint64_t* t3_buf
+        );
+        public void ecall_calculate_reciprocal_shares_unified(
+            int size,
+            int k1,
+            int k2,
+            uint64_t scale_factor,
+            [user_check] uint64_t* u_buf,
+            [user_check] uint64_t* v_buf,
+            int len_uv,
+            [user_check] uint64_t* t2_buf, 
+            [user_check] uint64_t* t3_buf
+        );
+
+        
+        public void ecall_calculate_invsqrt_steep_shares(
+            int size,
+            int k1,
+            int k2,
+            uint64_t scale_factor,
+            [user_check] uint64_t* u_buf,
+            [user_check] uint64_t* v_buf,
+            int len_uv,
+            [user_check] uint64_t* t2_buf,
+            [user_check] uint64_t* t3_buf
+        );
+
+        
+        public void ecall_calculate_invsqrt_flat_shares(
+            int size,
+            int k1,
+            int k2,
+            uint64_t scale_factor,
+            [user_check] uint64_t* u_buf,
+            [user_check] uint64_t* v_buf,
+            int len_uv,
+            [user_check] uint64_t* t2_buf,
+            [user_check] uint64_t* t3_buf
+        );
+
+        
+        public void ecall_calculate_reciprocal_steep_shares(
+            int size,
+            int k1,
+            int k2,
+            uint64_t scale_factor,
+            [user_check] uint64_t* u_buf,
+            [user_check] uint64_t* v_buf,
+            int len_uv,
+            [user_check] uint64_t* t2_buf,
+            [user_check] uint64_t* t3_buf
+        );
+
+        
+        public void ecall_calculate_reciprocal_flat_shares(
+            int size,
+            int k1,
+            int k2,
+            uint64_t scale_factor,
+            [user_check] uint64_t* u_buf,
+            [user_check] uint64_t* v_buf,
+            int len_uv,
+            [user_check] uint64_t* t2_buf,
+            [user_check] uint64_t* t3_buf
+        );
+    };
+    
+
+
+
+
+    untrusted {
+        void ocall_print_string([in, string] const char *str);
+    };
+
+};

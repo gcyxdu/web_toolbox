@@ -1,0 +1,1 @@
+"""Shared attack hooks."""

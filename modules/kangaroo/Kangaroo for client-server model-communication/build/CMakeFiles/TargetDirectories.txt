@@ -1,0 +1,4 @@
+/home/sunning/xuwei_experience_test/Kagoaroo/Kangaroo/Kangaroo for client-server model-communication/build/CMakeFiles/examples.dir
+/home/sunning/xuwei_experience_test/Kagoaroo/Kangaroo/Kangaroo for client-server model-communication/build/CMakeFiles/nonexamples.dir
+/home/sunning/xuwei_experience_test/Kagoaroo/Kangaroo/Kangaroo for client-server model-communication/build/CMakeFiles/edit_cache.dir
+/home/sunning/xuwei_experience_test/Kagoaroo/Kangaroo/Kangaroo for client-server model-communication/build/CMakeFiles/rebuild_cache.dir

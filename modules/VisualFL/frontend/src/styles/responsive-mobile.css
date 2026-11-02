@@ -1,0 +1,164 @@
+@media (max-width: 540px) {
+  .page-heading > .rt-Button {
+    display: none;
+  }
+  .page-heading h1 {
+    font-size: 21px;
+  }
+  .run-identity strong {
+    max-width: 205px;
+  }
+  .run-toolbar {
+    gap: 13px;
+  }
+  .run-actions {
+    width: 100%;
+    justify-content: flex-end;
+    gap: 13px;
+  }
+  .run-actions > .rt-Button:last-child {
+    margin-left: auto;
+  }
+  .run-identity .experiment-symbol {
+    width: 31px;
+    height: 34px;
+  }
+  .topology-canvas {
+    height: 365px;
+  }
+  .panel-toolbar {
+    padding: 0 12px;
+    gap: 8px;
+  }
+  .panel-title strong {
+    font-size: 14px;
+  }
+  .panel-title {
+    gap: 6px;
+  }
+  .panel-toolbar .rt-SegmentedControlItem {
+    font-size: 13px;
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+  .topology-subbar {
+    padding: 0 11px;
+    font-size: 12px;
+  }
+  .topology-subbar .rt-Button {
+    font-size: 12px;
+  }
+  .topology-footer {
+    flex-direction: column;
+    gap: 8px;
+    font-size: 13px;
+  }
+  .canvas-hint {
+    bottom: 12px;
+    left: 54%;
+    font-size: 7px;
+    gap: 3px;
+  }
+  .canvas-hint > svg {
+    width: 10px;
+  }
+  .metric-charts {
+    grid-template-columns: 1fr;
+  }
+  .chart-panel + .chart-panel {
+    border-left: 0;
+    border-top: 1px solid #edf1f3;
+    padding-top: 15px;
+    margin-top: 3px;
+  }
+  .chart-panel {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+  .chart-heading > span,
+  .chart-heading select {
+    font-size: 14px;
+  }
+  .chart-heading strong {
+    font-size: 16px;
+  }
+  .line-chart {
+    height: 175px;
+  }
+  .metrics-footnote {
+    font-size: 12px;
+    padding-left: 12px;
+  }
+  .inspector .settings-content {
+    display: block;
+  }
+  .run-provenance {
+    flex-direction: column;
+    gap: 3px;
+    font-size: 12px;
+  }
+  .workspace-tip {
+    align-items: flex-start;
+    font-size: 13px;
+    line-height: 1.7;
+  }
+  .workspace-tip > span {
+    max-width: 170px;
+  }
+  .content-panel {
+    padding: 16px;
+  }
+  .content-panel-heading p {
+    font-size: 14px;
+    line-height: 1.8;
+  }
+  .content-panel-heading h2 {
+    font-size: 15px;
+  }
+  .compare-picker {
+    grid-template-columns: 1fr;
+  }
+  .method-introduction {
+    align-items: flex-start;
+  }
+  .method-introduction > svg {
+    width: 23px;
+  }
+  .method-introduction strong {
+    font-size: 14px;
+  }
+  .method-row {
+    flex-wrap: wrap;
+    position: relative;
+    padding-bottom: 42px;
+    align-items: flex-start;
+  }
+  .method-row > .rt-Button {
+    position: absolute;
+    bottom: 12px;
+    left: 40px;
+  }
+  .method-row p {
+    font-size: 14px;
+  }
+  .breadcrumb {
+    font-size: 14px;
+    gap: 9px;
+  }
+  .replay-controls {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .replay-controls > span {
+    font-size: 13px;
+  }
+  .replay-controls input[type='range'] {
+    min-width: 80px;
+  }
+  .app-footer {
+    font-size: 12px;
+  }
+.field-grid {
+    gap: 13px;
+  }
+}

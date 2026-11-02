@@ -1,0 +1,40 @@
+[
+  {
+    "id": "CIFAR10",
+    "file": "cifar10.npz",
+    "sha256": "98328a1946bda6e30c2e46c7fedf9977811ca66f6b6729020c46189d5ccc4666",
+    "sources": [
+      {
+        "file": "cifar10-train.parquet",
+        "sha256": "8428b53a88a11ac374111006708df51469e315a22ac6d66470afd9c78d2ae883",
+        "rows": 50000,
+        "repo": "https://huggingface.co/datasets/uoft-cs/cifar10"
+      },
+      {
+        "file": "cifar10-test.parquet",
+        "sha256": "841389e6f2d64f28bf17310e430aebac20ec3ba611a3c5e231dc93c645ce84de",
+        "rows": 10000,
+        "repo": "https://huggingface.co/datasets/uoft-cs/cifar10"
+      }
+    ]
+  },
+  {
+    "id": "CIFAR100",
+    "file": "cifar100.npz",
+    "sha256": "3f69ecef1a82928446d98c7a8b29d2117daa21a505f0951a6f44c3623c7126dc",
+    "sources": [
+      {
+        "file": "cifar100-train.parquet",
+        "sha256": "694865d6b990e234804f01268586c41e88bcbbb75e20858432c05ad4081aca23",
+        "rows": 50000,
+        "repo": "https://huggingface.co/datasets/uoft-cs/cifar100"
+      },
+      {
+        "file": "cifar100-test.parquet",
+        "sha256": "98776c529bb146a9c791229df74a5cf076be9b43d82dbbd334b6a7788d73dc68",
+        "rows": 10000,
+        "repo": "https://huggingface.co/datasets/uoft-cs/cifar100"
+      }
+    ]
+  }
+]

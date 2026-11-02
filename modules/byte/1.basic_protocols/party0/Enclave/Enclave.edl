@@ -1,0 +1,52 @@
+
+
+enclave {
+    trusted {
+        public void ecall_smp_reset_64();
+        public void ecall_smp_gen_ab_r0_64(uint64_t seed, uint64_t count);
+        public void ecall_smp_tee1_computation_64(uint64_t count, uint64_t start_idx,
+                                                  [user_check] const uint64_t* x1_plus_r1,
+                                                  [user_check] const uint64_t* y1_plus_r2,
+                                                  [user_check] uint64_t* result);
+
+        public void ecall_3smp_reset_64();
+        public void ecall_3smp_gen_abc_r0_64(uint64_t seed, uint64_t count);
+        public void ecall_3smp_tee1_compute_m3_64(uint64_t count,
+                                                  [user_check] const uint64_t* x1_plus_r1,
+                                                  [user_check] const uint64_t* y1_plus_r2,
+                                                  [user_check] const uint64_t* w1_plus_r3);
+        public void ecall_3smp_tee1_compute_m4_64(uint64_t count,
+                                                  [user_check] const uint64_t* U,
+                                                  [user_check] const uint64_t* V,
+                                                  [user_check] const uint64_t* W,
+                                                  [user_check] uint64_t* result);
+
+        public void ecall_odrelu_reset_uint64();
+        public void ecall_odrelu_gen_shared_randomness_final_uint64(uint64_t seed, uint64_t vector_size, uint64_t xi);
+        public void ecall_odrelu_tee1_step1_uint64(uint64_t vector_size,
+                                                   [user_check] const uint64_t* x1_minus_r2,
+                                                   [user_check] uint64_t* result);
+        public void ecall_odrelu_tee1_step2_uint64(uint64_t vector_size,
+                                                   [user_check] const uint64_t* z_plus_r3,
+                                                   [user_check] uint64_t* result);
+        public void ecall_odrelu_get_stored_values_uint64(uint64_t vector_size,
+                                                          [user_check] uint64_t* a,
+                                                          [user_check] uint64_t* b,
+                                                          [user_check] uint64_t* r0,
+                                                          [user_check] uint64_t* r1,
+                                                          [user_check] uint64_t* v);
+
+        public void ecall_odrelu_reset_uint64_v2();
+        public void ecall_odrelu_gen_shared_randomness_final_uint64_v2(uint64_t seed, uint64_t vector_size, uint64_t xi);
+        public void ecall_odrelu_tee1_step1_uint64_v2(uint64_t vector_size,
+                                                      [user_check] const uint64_t* x1_minus_r2,
+                                                      [user_check] uint64_t* result);
+        public void ecall_odrelu_tee1_step2_uint64_v2(uint64_t vector_size,
+                                                      [user_check] const uint64_t* z_plus_r3,
+                                                      [user_check] uint64_t* result);
+    };
+
+    untrusted {
+        void ocall_print_string([in, string] const char* str);
+    };
+};

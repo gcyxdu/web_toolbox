@@ -1,0 +1,165 @@
+.app-shell:not(.sidebar-collapsed) {
+  grid-template-columns: 202px minmax(0, 1fr);
+}
+.app-shell.sidebar-collapsed {
+  grid-template-columns: 64px minmax(0, 1fr);
+}
+.sidebar-collapsed .sidebar {
+  padding: 22px 10px 18px;
+  align-items: center;
+}
+.sidebar-collapsed .brand {
+  padding: 0;
+}
+.sidebar-collapsed .new-experiment {
+  width: 40px;
+  padding: 0;
+}
+.sidebar-collapsed .sidebar nav {
+  width: 100%;
+  margin-top: 0;
+}
+.sidebar-collapsed .nav-item {
+  justify-content: center;
+  padding: 13px 8px;
+}
+.sidebar-collapsed .sidebar-footer {
+  padding: 20px 0 0;
+}
+.run-toolbar {
+  justify-content: space-between;
+}
+.run-status {
+  font-size: 15px;
+  color: #596f78;
+  white-space: nowrap;
+}
+.run-actions {
+  margin-left: auto;
+}
+.record-undo {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 10px;
+  flex-shrink: 0;
+}
+.record-undo .rt-CalloutText {
+  flex: 1;
+}
+.dataset-summary {
+  grid-column: 2;
+  font-size: 20px;
+  line-height: 1;
+  font-weight: 450;
+  white-space: nowrap;
+  padding: 0;
+  text-align: left;
+  background: none;
+  border: 0;
+  color: #263f49;
+}
+.dataset-summary small {
+  font-size: 14px;
+  color: var(--muted);
+}
+.dataset-summary:hover {
+  color: var(--accent);
+}
+.dataset-details-button {
+  width: 100%;
+  margin: 0 0 15px !important;
+}
+.system-dialog .dialog-actions {
+  justify-content: flex-end;
+}
+@media (min-width: 640px) {
+  body:has(.app-shell) {
+    overflow: hidden;
+  }
+  .app-shell {
+    height: 100dvh;
+    min-height: 0;
+  }
+  .app-shell .app-content {
+    height: 100dvh;
+    min-height: 0;
+    overflow: hidden;
+  }
+  .app-shell .main-content {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    padding: 14px 20px 16px;
+    overflow: hidden;
+  }
+  .main-content > .content-panel {
+    flex: 1;
+    min-height: 0;
+    padding: 16px 20px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .history-panel .table-scroll {
+    flex: 1;
+    min-height: 0;
+  }
+  .history-panel thead {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+  }
+  .runs-table td {
+    padding-top: 14px;
+    padding-bottom: 14px;
+  }
+  .method-row > .rt-Button,
+  .table-actions > .rt-Button {
+    margin: 0 !important;
+  }
+  .inspector .settings-section {
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+  .inspector .settings-section h3 {
+    margin-bottom: 8px;
+  }
+  .inspector .field,
+  .inspector .field-grid .field {
+    margin-bottom: 6px;
+    gap: 4px;
+  }
+}
+@media (max-width: 639px) {
+  .app-shell:not(.sidebar-collapsed) {
+    grid-template-columns: 168px minmax(0, 1fr);
+  }
+  .app-shell.sidebar-collapsed {
+    grid-template-columns: 54px minmax(0, 1fr);
+  }
+  .sidebar {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+  .content-panel {
+    padding: 15px;
+    min-height: 0;
+  }
+}
+
+@media (max-width: 639px) {
+  .app-shell:not(.sidebar-collapsed) {
+    grid-template-columns: 54px minmax(0, 1fr);
+  }
+  .app-shell:not(.sidebar-collapsed) .sidebar {
+    position: fixed;
+    inset: 0 auto 0 0;
+    width: 202px;
+    z-index: 30;
+    box-shadow: 10px 0 28px #22394d16;
+  }
+  .app-shell:not(.sidebar-collapsed) .app-content {
+    grid-column: 2;
+  }
+}

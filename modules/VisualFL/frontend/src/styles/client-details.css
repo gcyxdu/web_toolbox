@@ -1,0 +1,173 @@
+.dataset-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f6f8fa;
+  border: 1px solid #e7ecef;
+  padding: 11px 10px;
+  border-radius: 5px;
+  margin-bottom: 14px;
+}
+.dataset-line strong {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 14px;
+  font-weight: 450;
+}
+.dataset-line span {
+  font-size: 12px;
+  color: var(--muted);
+}
+.info-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  background: #f5f8fa;
+  border: 1px solid #e8edf0;
+  border-radius: 5px;
+  padding: 10px 9px;
+  color: #657984;
+  font-size: 13px;
+  line-height: 1.8;
+  margin-top: 10px;
+}
+.info-note svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.settings-section > .field-note {
+  margin-bottom: 12px;
+}
+.switch-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 14px;
+  margin-bottom: 15px;
+}
+.switch-row > span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.switch-row svg {
+  color: #aa7b4f;
+}
+.frozen-note {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #f7f9fa;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+  color: #647783;
+  line-height: 1.8;
+}
+.frozen-note svg {
+  flex-shrink: 0;
+}
+.detail-list {
+  margin: 0;
+}
+.detail-list > div {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  margin: 11px 0;
+}
+.detail-list dt {
+  color: #627782;
+}
+.detail-list dd {
+  margin: 0;
+}
+.inspector-loading,
+.empty-copy {
+  padding: 23px 0;
+  font-size: 14px;
+  color: var(--muted);
+  text-align: center;
+}
+
+.client-parameter-mode {
+  font-size: 12px;
+  color: #84939e;
+  margin: -3px 0 12px;
+  line-height: 1.7;
+}
+.switch-row .client-device-icon {
+  color: #6f5a5a;
+}
+.distribution-summary {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 13px;
+  color: #84909a;
+  padding: 6px 0;
+}
+.distribution-summary strong {
+  font-size: 15px;
+  color: #405865;
+  font-weight: 600;
+  margin: 0 2px;
+}
+.distribution-caption {
+  font-size: 12px;
+  color: #8b98a1;
+  line-height: 1.7;
+  margin: 4px 0 12px;
+}
+.distribution-table-heading {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #9aa4ae;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #edf1f4;
+}
+.client-distribution {
+  max-height: 250px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  padding: 7px 5px 3px 0;
+}
+.distribution-row {
+  display: grid;
+  grid-template-columns: minmax(64px, 0.95fr) minmax(40px, 1fr) 35px 43px;
+  align-items: center;
+  gap: 8px;
+  min-height: 31px;
+  font-size: 12px;
+}
+.distribution-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #5a6e7b;
+}
+.distribution-track {
+  height: 6px;
+  background: #eef3f4;
+  border-radius: 3px;
+  overflow: hidden;
+}
+.distribution-track > span {
+  display: block;
+  height: 100%;
+  background: #80aa9e;
+  border-radius: inherit;
+}
+.distribution-row strong {
+  text-align: right;
+  font-weight: 500;
+  color: #4c626e;
+  font-variant-numeric: tabular-nums;
+}
+.distribution-share {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  color: #98a3ab;
+}

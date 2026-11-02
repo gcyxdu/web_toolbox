@@ -1,0 +1,63 @@
+.workbench-page > .run-toolbar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+.run-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+.run-heading > strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 14px;
+  font-weight: 600;
+  color: #354e5c;
+}
+.run-heading .run-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  flex-shrink: 0;
+  font-size: 12px;
+  color: #72838f;
+}
+.run-heading .run-status::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #a9b6c1;
+}
+.run-heading .run-status-completed::before,
+.run-heading .run-status-running::before { background: #6dab91; }
+.run-toolbar > .run-actions {
+  display: flex;
+  grid-column: 2;
+  grid-row: 1;
+  align-items: center;
+  gap: 7px;
+  margin: 0;
+}
+.run-toolbar .run-actions > .rt-Button { height: 30px; font-size: 13px; }
+.run-actions .rt-Button:has(svg:only-child) { padding: 5px 6px; min-width: 29px; }
+@media (max-width: 639px) {
+  .workbench-page > .run-toolbar { padding: 10px; gap: 10px; }
+  .run-heading { grid-column: 1 / -1; }
+  .run-toolbar > .run-actions {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    min-width: 0;
+    width: auto;
+  }
+}

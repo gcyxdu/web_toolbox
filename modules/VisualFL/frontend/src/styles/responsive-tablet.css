@@ -1,0 +1,139 @@
+@media (max-width: 1080px) {
+  .app-shell {
+    grid-template-columns: 72px minmax(0, 1fr);
+  }
+  .sidebar {
+    padding: 22px 10px;
+  }
+  .brand {
+    padding: 0;
+    justify-content: center;
+  }
+  .main-content {
+    padding: 24px 18px 10px;
+  }
+  .run-identity strong {
+    max-width: 205px;
+  }
+  .run-actions {
+    gap: 9px;
+  }
+  .run-actions .scenario-select {
+    display: none;
+  }
+  .content-panel {
+    padding: 20px;
+  }
+  .compare-picker {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 960px) {
+  .app-shell {
+    grid-template-columns: 58px minmax(0, 1fr);
+  }
+  .sidebar {
+    padding: 19px 7px;
+  }
+  .brand-mark {
+    width: 29px;
+    height: 30px;
+  }
+  .main-content {
+    padding: 20px 14px 10px;
+  }
+  .page-heading {
+    margin-bottom: 17px;
+    gap: 10px;
+  }
+  .page-heading h1 {
+    font-size: 21px;
+  }
+  .page-heading p {
+    font-size: 14px;
+    max-width: 235px;
+    line-height: 1.8;
+  }
+  .page-heading > .rt-Button {
+    font-size: 13px;
+    padding: 0 9px;
+  }
+  .run-toolbar {
+    padding: 12px;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .run-identity {
+    flex: 1;
+  }
+  .run-identity strong {
+    max-width: 250px;
+  }
+  .run-actions {
+    margin-left: auto;
+  }
+  .run-actions > .rt-Button {
+    height: 29px;
+    font-size: 14px;
+  }
+.workbench-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .inspector {
+    grid-row: 2;
+  }
+  .inspector .settings-content {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 23px;
+    padding: 0 18px;
+  }
+  .settings-section {
+    min-width: 0;
+  }
+  .topology-canvas {
+    height: 390px;
+  }
+  .topology-footer {
+    font-size: 13px;
+  }
+  .topology-footer .meta-separator {
+    margin: 0 6px;
+  }
+  .run-provenance {
+    font-size: 13px;
+  }
+  .inspector-tabs > .rt-TabsList {
+    padding: 0 17px;
+  }
+  .comparison-charts {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .content-panel {
+    min-height: 480px;
+  }
+  .method-introduction {
+    padding: 15px;
+    gap: 12px;
+  }
+  .method-introduction > a {
+    display: none;
+  }
+  .method-row {
+    gap: 12px;
+  }
+  .method-row > .rt-Button {
+    font-size: 13px;
+  }
+  .app-footer {
+    padding: 15px;
+  }
+  .event-row {
+    grid-template-columns: 55px 55px 1fr;
+    font-size: 13px;
+  }
+  .event-row > span:last-child {
+    display: none;
+  }
+}

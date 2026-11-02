@@ -1,0 +1,80 @@
+@media (min-width: 1700px) {
+  .topology-canvas {
+    height: 450px;
+  }
+  .main-content {
+    padding-left: 34px;
+    padding-right: 34px;
+  }
+  .workbench-grid {
+    grid-template-columns: minmax(0, 1fr) 310px;
+  }
+  .line-chart {
+    height: 205px;
+  }
+}
+@media (max-width: 1280px) {
+  .app-shell {
+    grid-template-columns: 180px minmax(0, 1fr);
+  }
+  .sidebar {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+  .main-content {
+    padding: 23px 20px 10px;
+  }
+  .workbench-grid {
+    grid-template-columns: minmax(0, 1fr) 265px;
+    gap: 12px;
+  }
+  .run-actions {
+    gap: 8px;
+  }
+  .run-identity strong {
+    max-width: 220px;
+  }
+  .scenario-select {
+    max-width: 96px;
+    font-size: 14px;
+  }
+.settings-content {
+    padding: 0 13px;
+  }
+  .panel-title .subtle-label {
+    display: none;
+  }
+  .topology-footer {
+    font-size: 12px;
+    padding-left: 11px;
+    padding-right: 11px;
+  }
+  .topology-footer .meta-separator {
+    margin: 0 4px;
+  }
+  .run-provenance {
+    font-size: 12px;
+  }
+  .canvas-hint {
+    font-size: 12px;
+  }
+  .recent-run strong {
+    max-width: 123px;
+  }
+  .topology-canvas {
+    height: 365px;
+  }
+  .metric-charts {
+    padding-top: 13px;
+  }
+  .chart-panel {
+    padding: 0 10px;
+  }
+  .chart-heading strong {
+    font-size: 14px;
+  }
+  .chart-heading > span,
+  .chart-heading select {
+    font-size: 13px;
+  }
+}

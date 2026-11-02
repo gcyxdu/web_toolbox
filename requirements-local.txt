@@ -1,0 +1,30 @@
+# 脱敏系统与 TTSDC 在本机 Python 3.12 上可安装的依赖。
+# torch / torchvision 使用 CPU 轮子，不从这一份清单安装。
+numpy
+opencv-python
+scipy
+scikit-learn
+matplotlib
+pandas
+librosa
+soundfile
+Pillow
+tqdm
+audiomentations
+pydub
+python_speech_features
+pymysql
+requests
+imageio
+Flask
+flask-cors
+pyyaml
+sqlalchemy
+imbalanced-learn
+mmh3
+cvzone
+mtcnn
+sympy
+pycryptodome
+graphviz
+ffmpegcv

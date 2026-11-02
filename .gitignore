@@ -1,0 +1,11 @@
+# GitHub 单文件上限 100MB。压缩包与 CIFAR 原始数据超出上限，源码仍在 modules 里。
+/VisualFL.7z
+modules/VisualFL/backend/assets/cifar/*.npz
+
+# 本地运行产物
+__pycache__/
+*.py[cod]
+runtime-logs/
+
+# 推送时临时挪开的嵌套仓库目录
+.git.hold

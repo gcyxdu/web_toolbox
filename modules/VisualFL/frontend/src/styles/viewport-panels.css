@@ -1,0 +1,114 @@
+@media (min-width: 640px) {
+  .metrics-panel {
+    margin: 0;
+    flex: 0 0 clamp(185px, 28dvh, 250px);
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .metric-charts {
+    min-height: 0;
+    flex: 1;
+    padding: 9px 0 5px;
+  }
+  .chart-panel {
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .chart-heading {
+    min-height: 24px;
+    padding-bottom: 2px;
+    flex-shrink: 0;
+  }
+  .chart-heading > span,
+  .chart-heading select {
+    font-size: 14px;
+  }
+  .chart-heading strong {
+    font-size: 18px;
+  }
+  .metrics-panel .line-chart,
+  .metrics-panel .chart-empty {
+    min-height: 65px;
+    flex: 1;
+    height: auto !important;
+  }
+  .event-log {
+    min-height: 0;
+    height: auto;
+    flex: 1;
+  }
+  .replay-controls {
+    margin: 0;
+    min-height: 32px;
+    padding: 5px 11px;
+    flex-shrink: 0;
+  }
+  .replay-controls,
+  .replay-controls .rt-Button,
+  .replay-controls strong,
+  .replay-controls select {
+    font-size: 13px;
+  }
+  .replay-controls > span {
+    display: none;
+  }
+  .inspector {
+    min-height: 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .inspector-heading {
+    height: 40px;
+    min-height: 40px;
+    padding: 0 13px;
+    flex-shrink: 0;
+  }
+  .inspector-tabs {
+    min-height: 0;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  .inspector-tabs > .rt-TabsList {
+    padding: 0 9px;
+    height: 38px;
+    min-height: 38px;
+    flex-shrink: 0;
+  }
+  .inspector-tabs .rt-TabsTrigger {
+    font-size: 14px;
+    padding: 0 9px;
+  }
+  .inspector [role='tabpanel'] {
+    min-height: 0;
+    flex: 1;
+    overflow: auto;
+    scrollbar-width: thin;
+  }
+  .inspector .settings-content {
+    display: block;
+    padding: 0 14px;
+  }
+  .settings-section {
+    padding: 12px 0;
+  }
+  .settings-section h3 {
+    margin-bottom: 10px;
+  }
+  .field {
+    gap: 5px;
+    margin-bottom: 10px;
+  }
+  .field-grid .field {
+    margin-bottom: 10px;
+  }
+  .frozen-note {
+    flex-shrink: 0;
+    padding: 7px 13px;
+    font-size: 13px;
+  }
+}

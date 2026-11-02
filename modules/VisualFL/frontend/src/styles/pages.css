@@ -1,0 +1,109 @@
+.content-panel {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  min-height: 580px;
+}
+.content-panel-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  padding-bottom: 23px;
+  border-bottom: 1px solid #e9eef1;
+}
+.content-panel-heading h2 {
+  font-size: 16px;
+  font-weight: 550;
+  letter-spacing: -0.3px;
+}
+.content-panel-heading p {
+  font-size: 14px;
+  color: var(--muted);
+  margin-top: 7px;
+}
+.content-panel-heading > .mono {
+  font-size: 14px;
+}
+.page-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  min-height: 350px;
+  text-align: center;
+  color: #7a8d96;
+}
+.page-empty h3 {
+  font-size: 15px;
+  color: #526973;
+  font-weight: 500;
+}
+.page-empty p {
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--muted);
+}
+.table-scroll {
+  width: 100%;
+  overflow: auto;
+}
+.runs-table {
+  border-collapse: collapse;
+  width: 100%;
+  text-align: left;
+  white-space: nowrap;
+  font-size: 14px;
+}
+.runs-table thead {
+  background: #fafcfd;
+}
+.runs-table th {
+  color: #687d88;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 14px 14px 14px 0;
+  border-bottom: 1px solid #e6ecef;
+}
+.runs-table td {
+  padding: 17px 14px 17px 0;
+  border-bottom: 1px solid #edf1f3;
+}
+.runs-table td:last-child,
+.runs-table th:last-child {
+  padding-right: 0;
+  text-align: right;
+}
+.runs-table small {
+  font-size: 13px;
+  color: var(--muted);
+  display: block;
+  margin-top: 6px;
+}
+.runs-table td > button {
+  border: 0;
+  background: transparent;
+  text-align: left;
+  padding: 0;
+  color: #354d59;
+  max-width: 240px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.run-name-button:hover {
+  color: var(--accent);
+}
+.table-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+.series-key {
+  display: inline-block;
+  height: 7px;
+  width: 7px;
+  margin-right: 8px;
+  border-radius: 2px;
+}

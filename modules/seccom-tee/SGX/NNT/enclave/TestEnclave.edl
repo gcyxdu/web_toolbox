@@ -1,0 +1,28 @@
+/* TestEnclave.edl - Top EDL file. */
+
+enclave {
+    include "openssl/bn.h" 
+    from "sgx_tsgxssl.edl" import *;
+    from "sgx_pthread.edl" import *;
+
+    untrusted {
+        void uprint([in, string] const char *str);
+        void usgx_exit(int reason);
+    };
+
+    trusted {
+        public int she_generateRandomKeysTee();
+        public int she_generateRandomKeysTee2();
+        public void getActivation([user_check]char *res,int LayerSeqNum,int NodeSeqNum,[in,size=24]BIGNUM *input);
+        public int she_encryptTeeString([user_check]char *str_c, [user_check]char *str_m);
+        public void SHEkMulTEE([user_check]char *outputString,[in,size=24]BIGNUM *input1,[in,size=24]BIGNUM *input2);
+        public void calRefreshX([user_check]char *outputString, int inputTimes, int outputTimes, [in,size=24]BIGNUM *input);
+        public void calENegx([user_check]char *outputString,[in,size=24]BIGNUM *input);
+        public void calNegx([user_check]char *outputString,int flag,[in,size=24]BIGNUM *input);
+        public void sigmoid_inverseX([user_check]char *outputString,[in,size=24]BIGNUM *input);
+        public void calRelu([user_check]BIGNUM *output1,[user_check]BIGNUM *output2,[user_check]BIGNUM *input);
+        public void sheRescale([user_check]BIGNUM *output, [user_check]BIGNUM *input, int k, int kTimes);
+        public void sheRescaleNeg([user_check]BIGNUM *output, [user_check]BIGNUM *input, int k, int kTimes);
+        public void reluCipherMulTEE([user_check]BIGNUM *output, [user_check]BIGNUM *Eb, [user_check]BIGNUM *Em, int k, int EmTimes);
+    };
+};

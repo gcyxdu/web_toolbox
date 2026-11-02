@@ -1,0 +1,108 @@
+.client-node {
+  width: 122px;
+  min-height: 54px;
+  background: #fff;
+  border: 1px solid #d8e2e7;
+  border-radius: 7px;
+  box-shadow: 0 2px 3px #30465204;
+  overflow: hidden;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
+}
+.client-node.is-selected {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px #2c6d6212;
+}
+.client-node.is-training {
+  border-color: #549489;
+  background: #f3f9f6;
+}
+.client-node.is-attacker {
+  border-color: #d5b08b;
+}
+.client-node.is-attacker.is-selected {
+  border-color: var(--accent);
+}
+.client-node-top {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 9px 3px;
+}
+.node-icon {
+  display: flex;
+  color: #6b8b91;
+}
+.client-node strong {
+  font-size: 15px;
+  font-weight: 550;
+  letter-spacing: -0.2px;
+}
+.client-node .attack-icon {
+  margin-left: auto;
+  color: #b28252;
+}
+.client-node .done-icon {
+  margin-left: auto;
+  color: #467e70;
+}
+.client-node-bottom {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 9px 8px 33px;
+  font-size: 14px;
+  color: #697d87;
+}
+.client-node-bottom .mono {
+  font-size: 14px;
+  letter-spacing: 0;
+}
+.server-node {
+  width: 150px;
+  min-height: 133px;
+  background: #fff;
+  border: 1px solid #cddedb;
+  border-radius: 9px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 14px 12px 0;
+  box-shadow: 0 4px 12px #2c6d6208;
+}
+.server-node.is-selected {
+  border-color: #689b8e;
+  box-shadow: 0 0 0 3px #2c6d620b;
+}
+.server-node-icon {
+  display: grid;
+  place-items: center;
+  color: var(--accent);
+  background: #edf5f2;
+  border-radius: 7px;
+  width: 40px;
+  height: 38px;
+  margin-bottom: 8px;
+}
+.server-node strong {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.2px;
+}
+.server-algorithm {
+  font-size: 14px;
+  color: #607d78;
+  margin: 5px 0 9px;
+  letter-spacing: 0.3px;
+}
+.server-phase {
+  border-top: 1px solid #e4ece9;
+  font-size: 14px;
+  color: #5a796f;
+  text-align: center;
+  width: calc(100% + 24px);
+  padding: 7px 0;
+  background: #f7faf8;
+  border-radius: 0 0 9px 9px;
+}

@@ -1,0 +1,131 @@
+:root {
+  --bg: #ffffff;
+  --ink: #111111;
+  --mute: #a1a1a1;
+  --line: #ececec;
+  --fill: #fafafa;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+}
+
+body {
+  font: 16px/1.5 "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  letter-spacing: 0.01em;
+}
+
+a { color: inherit; text-decoration: none; }
+
+.top {
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 40px;
+  border-bottom: 1px solid var(--line);
+  background: var(--bg);
+}
+
+.logo {
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+}
+
+.nav {
+  display: flex;
+  gap: 36px;
+}
+
+.nav a {
+  font-size: 14px;
+  color: var(--mute);
+}
+
+.nav a:hover,
+.nav a.is-on {
+  color: var(--ink);
+}
+
+.stage {
+  min-height: calc(100vh - 64px);
+}
+
+.stage--home,
+.stage--tools {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 40px 72px;
+}
+
+.grid {
+  width: min(1080px, 100%);
+  display: grid;
+  gap: 16px;
+}
+
+.grid--three {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.grid--tools {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.card {
+  display: flex;
+  align-items: flex-end;
+  min-height: 280px;
+  padding: 28px 28px 24px;
+  border: 1px solid var(--line);
+  background: var(--bg);
+  font-size: 22px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  transition: border-color 0.15s ease;
+}
+
+.card:hover {
+  border-color: var(--ink);
+}
+
+.card.is-static {
+  cursor: default;
+  min-height: 160px;
+  font-size: 18px;
+}
+
+.card.is-static:hover {
+  border-color: var(--line);
+}
+
+.stage--embed {
+  height: calc(100vh - 64px);
+  min-height: 0;
+}
+
+.stage--embed iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+  background: var(--bg);
+}
+
+@media (max-width: 860px) {
+  .top { padding: 0 20px; }
+  .nav { gap: 18px; }
+  .stage--home,
+  .stage--tools { padding: 28px 20px 48px; }
+  .grid--three,
+  .grid--tools { grid-template-columns: 1fr; }
+  .card { min-height: 140px; }
+  .card.is-static { min-height: 96px; }
+}

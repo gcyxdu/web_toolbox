@@ -1,0 +1,157 @@
+{
+  "upstream": "https://github.com/vio1etus/FLPoison",
+  "revision": "2e9a9d41e9cbe991b88505324fada5e8ac47fad3",
+  "license": "GPL-2.0",
+  "files": [
+    {
+      "file": "utils.py",
+      "upstream_file": "global_utils.py",
+      "upstream_sha256": "5ead4233d5593788272e1f7da5b554ef82d4d367e08c1729b2f50892250b1867",
+      "changes": "Namespaced imports; retained selected components only."
+    },
+    {
+      "file": "client.py",
+      "upstream_file": "fl/client.py",
+      "upstream_sha256": "050a39d544b74a2105e457b69190dc01f0562c108466566c61b8ef3ffb30f053",
+      "changes": "Local imports; platform owns timing; CPU loaders do not pin memory."
+    },
+    {
+      "file": "server.py",
+      "upstream_file": "fl/server.py",
+      "upstream_sha256": "7b55beab778e7c0d1844245093472d6bf4122d527c109293536eee11857a6554",
+      "changes": "Local imports; platform owns timing; CPU loaders do not pin memory."
+    },
+    {
+      "file": "worker.py",
+      "upstream_file": "fl/worker.py",
+      "upstream_sha256": "7cddb478508430126e38057e6b8b1e5c0920fa65ff25e9e7d5d56521937b17ac",
+      "changes": "Local imports; platform owns timing; CPU loaders do not pin memory."
+    },
+    {
+      "file": "algorithms/algorithmbase.py",
+      "upstream_file": "fl/algorithms/algorithmbase.py",
+      "upstream_sha256": "806f672444a6947b8da77cf97ccc8b0941e28354c7287e93a73b019f6bc3278e",
+      "changes": "Namespaced imports; retained selected components only."
+    },
+    {
+      "file": "algorithms/fedavg.py",
+      "upstream_file": "fl/algorithms/fedavg.py",
+      "upstream_sha256": "253d6b033676278cab13d8519d7dc5c5d2d5a0162eefb554d4aa97c6c1302515",
+      "changes": "Namespaced imports; retained selected components only."
+    },
+    {
+      "file": "algorithms/fedsgd.py",
+      "upstream_file": "fl/algorithms/fedsgd.py",
+      "upstream_sha256": "0e5d086250f1dd183af60098ec4ecbcb7ba95983376cb5789698ab7d75523bea",
+      "changes": "Namespaced imports; retained selected components only."
+    },
+    {
+      "file": "algorithms/fedopt.py",
+      "upstream_file": "fl/algorithms/fedopt.py",
+      "upstream_sha256": "f852e646c6420d4ad71e4a257ad4c68b59eec2d913fe771332411dac46b1a5b5",
+      "changes": "Namespaced imports; retained selected components only."
+    },
+    {
+      "file": "aggregators/aggregatorbase.py",
+      "upstream_file": "aggregators/aggregatorbase.py",
+      "upstream_sha256": "54cc2c09eb3c70eb856722b0ee00a7d8b0f9bd07c904dc2a5cd4234c532be3e2",
+      "changes": "Namespaced imports; retained selected components only."
+    },
+    {
+      "file": "aggregators/mean.py",
+      "upstream_file": "aggregators/mean.py",
+      "upstream_sha256": "66901ea977e426ce94958a8a0f319fbe6c41ba08936ce04fc04773c8339bfa64",
+      "changes": "Namespaced imports; retained selected components only."
+    },
+    {
+      "file": "aggregators/median.py",
+      "upstream_file": "aggregators/median.py",
+      "upstream_sha256": "645163af9525c237390326ad9c7ca8fb076029709725d4ff976c702e48393935",
+      "changes": "Namespaced imports; retained selected components only."
+    },
+    {
+      "file": "aggregators/trimmedmean.py",
+      "upstream_file": "aggregators/trimmedmean.py",
+      "upstream_sha256": "4cf5b816ab624116d753f564068fd894a4ec8a3ee8e6eab835c4f1f21d67bce9",
+      "changes": "Namespaced imports; retained selected components only."
+    },
+    {
+      "file": "aggregators/normclipping.py",
+      "upstream_file": "aggregators/normclipping.py",
+      "upstream_sha256": "e478a009ecb89f346361608e4a2bbb85e39ccc9084f357500930d30541434114",
+      "changes": "Namespaced imports; retained selected components only."
+    },
+    {
+      "file": "aggregators/krum.py",
+      "upstream_file": "aggregators/krum.py",
+      "upstream_sha256": "ef243e495264e55f383209836d6e3074de3bc20689b73df94e0788a2e2ede7c5",
+      "changes": "Namespaced imports; retained selected components only."
+    },
+    {
+      "file": "models/model_utils.py",
+      "upstream_file": "fl/models/model_utils.py",
+      "upstream_sha256": "4f9b246b00874a4a875a6aebb2fbabda9f95698670fdacfcbe4af76a85230d30",
+      "changes": "Namespaced imports; retained selected components only."
+    },
+    {
+      "file": "models/regression.py",
+      "upstream_file": "fl/models/regression.py",
+      "upstream_sha256": "ea494316807b044affb07871f7e13701e75775b5f13fef31cd6f8ede9745bc2b",
+      "changes": "Namespaced imports; retained selected components only."
+    },
+    {
+      "file": "aggregators/aggregator_utils.py",
+      "upstream_file": "aggregators/aggregator_utils.py",
+      "upstream_sha256": "c57a9f145749ed0357f1b066b4321da83eb3bc3a5c53f6c8a9520bde0b396932",
+      "changes": "Selected helpers; fix truthy-string branch when converting FedAvg parameters to deltas."
+    },
+    {
+      "file": "attacks/gaussian.py",
+      "upstream_file": "attackers/gaussian.py",
+      "upstream_sha256": "73c0bd7dfabc7525df8f7adbf43678ba120a4e1e5943bfcc6ae145d8be9fe406",
+      "changes": "Namespaced imports; retained selected components only."
+    },
+    {
+      "file": "attacks/signflipping.py",
+      "upstream_file": "attackers/signflipping.py",
+      "upstream_sha256": "08a4042dc154dab6c4f966d3fd7923c3f5aa4f318b1711c7920d6f1b0634448a",
+      "changes": "Namespaced imports; retained selected components only."
+    },
+    {
+      "file": "attacks/pbases/pbase.py",
+      "upstream_file": "attackers/pbases/pbase.py",
+      "upstream_sha256": "6c814622c830186ec2f78ed3f50b97ab9a8b49eee986e56fdeee174e3610c795",
+      "changes": "Namespaced imports; retained selected components only."
+    },
+    {
+      "file": "attacks/pbases/mpbase.py",
+      "upstream_file": "attackers/pbases/mpbase.py",
+      "upstream_sha256": "78023fa2466b5dc269de5c1171972175379f53ca950be87be081b4eba4afe2f2",
+      "changes": "Namespaced imports; retained selected components only."
+    },
+    {
+      "file": "attacks/pbases/dpbase.py",
+      "upstream_file": "attackers/pbases/dpbase.py",
+      "upstream_sha256": "54dee6dc403613db4949128bdd8c18827cddc0709268964f144ace74d43fdb7d",
+      "changes": "Keep poisoning loaders/schedules; omit unrelated external dataset evaluation."
+    },
+    {
+      "file": "attacks/badnets.py",
+      "upstream_file": "attackers/badnets.py",
+      "upstream_sha256": "1b1abd8a600165bce7fcca2310fd808d4aea1ea689a9fca3de6659ee00fa2b51",
+      "changes": "Retain pixel-trigger BadNets; omit unsupported image-file variant."
+    },
+    {
+      "file": "attacks/synthesizers/synthesizer.py",
+      "upstream_file": "attackers/synthesizers/synthesizer.py",
+      "upstream_sha256": "cbdb2451277c59ebacfc91f1826811bf11f0c3a94e978d13036b71df19ce4360",
+      "changes": "Namespaced imports; retained selected components only."
+    },
+    {
+      "file": "attacks/synthesizers/pixel_synthesizer.py",
+      "upstream_file": "attackers/synthesizers/pixel_synthesizer.py",
+      "upstream_sha256": "2ab6dc8520fb2b9adbf24ce4987b1fb5bbf1affe893ba82545fe07433c9c8bb9",
+      "changes": "Equivalent tensor normalization removes unused torchvision dependency."
+    }
+  ]
+}

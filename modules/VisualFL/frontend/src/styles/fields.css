@@ -1,0 +1,40 @@
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 0;
+  margin-bottom: 13px;
+}
+.field:last-child {
+  margin-bottom: 0;
+}
+.field > label {
+  font-size: 14px;
+  color: #586e7b;
+}
+.field > small {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+.field .rt-TextFieldRoot,
+.field .rt-SelectTrigger {
+  width: 100%;
+  background: #fdfefe;
+  box-shadow: inset 0 0 0 1px #dfe6ea;
+  font-size: 14px;
+}
+.field .rt-TextFieldRoot:focus-within {
+  box-shadow: inset 0 0 0 1px #6b9a8f;
+}
+.field-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 13px;
+}
+.field-grid > .field:only-child {
+  grid-column: span 2;
+}
+.field-grid .field {
+  margin-bottom: 13px;
+}

@@ -1,0 +1,225 @@
+.app-shell {
+  display: grid;
+  grid-template-columns: 202px minmax(0, 1fr);
+  min-height: 100dvh;
+}
+.sidebar {
+  position: sticky;
+  top: 0;
+  height: 100dvh;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 23px 15px 18px;
+  border-right: 1px solid var(--border);
+  background: #ffffff;
+  overflow: hidden;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 26px;
+  font-weight: 650;
+  letter-spacing: -1.1px;
+  padding: 0 8px;
+  white-space: nowrap;
+}
+.brand-mark {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  color: #fff;
+  background: var(--accent);
+  border-radius: 8px;
+}
+.brand-light {
+  font-weight: 400;
+  color: #71818c;
+}
+.new-experiment {
+  width: 100%;
+  margin: 27px 0 18px !important;
+  border: 1px solid #dce4e8 !important;
+  background: #fff !important;
+  flex-shrink: 0;
+}
+.sidebar nav {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 12px 10px;
+  background: transparent;
+  border: 0;
+  border-radius: 6px;
+  text-align: left;
+  color: #62717b;
+  font-size: 15px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.nav-item:hover {
+  background: #f0f4f5;
+  color: #26343e;
+}
+.nav-item.active {
+  background: #eaf2ef;
+  color: var(--accent);
+  font-weight: 600;
+}
+.recent-section {
+  margin-top: 25px;
+  min-height: 0;
+  overflow: auto;
+  scrollbar-width: thin;
+}
+.recent-toggle {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 8px 9px 12px;
+  background: #fbfcfd;
+  border: 0;
+  color: var(--muted);
+  font-size: 15px;
+  text-align: left;
+}
+.recent-runs {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.recent-run {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 9px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  text-align: left;
+}
+.recent-run:hover,
+.recent-run.active {
+  background: #eff3f5;
+}
+.recent-run > div {
+  min-width: 0;
+}
+.recent-run strong {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 140px;
+  font-size: 14px;
+  font-weight: 500;
+}
+.recent-run small {
+  font-size: 14px;
+  color: var(--muted);
+  display: block;
+  margin-top: 5px;
+}
+.run-state-dot {
+  width: 5px;
+  height: 5px;
+  margin-top: 7px;
+  border-radius: 50%;
+  background: #a0adb5;
+  flex-shrink: 0;
+}
+.run-state-dot.completed,
+.run-state-dot.running {
+  background: var(--accent);
+}
+.run-state-dot.failed {
+  background: #ba685b;
+}
+.recent-empty {
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--muted);
+  padding: 3px 10px;
+}
+.sidebar-footer {
+  margin-top: auto;
+  padding: 20px 9px 0;
+  flex-shrink: 0;
+}
+.connection {
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--muted);
+}
+.connection.online .status-dot {
+  background: var(--accent);
+}
+
+.sidebar-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  flex-shrink: 0;
+}
+.sidebar-heading .brand {
+  padding: 0;
+  gap: 8px;
+  font-size: 24px;
+}
+.sidebar-heading .brand-mark {
+  background: none;
+  box-shadow: none;
+}
+.brand-mark img {
+  display: block;
+  border-radius: 8px;
+}
+.sidebar-toggle {
+  flex-shrink: 0;
+  color: #87929d;
+}
+.sidebar-collapsed .sidebar-heading {
+  flex-direction: column;
+  gap: 15px;
+}
+.sidebar-footer {
+  width: 100%;
+  padding: 15px 0 0;
+  border-top: 1px solid #e7ecef;
+}
+.sidebar-footer .connection {
+  padding: 13px 10px 0;
+  font-size: 12px;
+}
+.sidebar-hardware {
+  font-size: 14px;
+}
+.sidebar-hardware:focus-visible,
+.sidebar-toggle:focus-visible {
+  outline: 2px solid #7e99f4;
+  outline-offset: 2px;
+}
+.sidebar-collapsed .sidebar-footer {
+  padding-top: 14px;
+}
+.sidebar-collapsed .sidebar-footer .connection {
+  justify-content: center;
+  padding: 14px 0 0;
+}

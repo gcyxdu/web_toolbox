@@ -1,0 +1,6 @@
+.dialog-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-top: 23px;
+}

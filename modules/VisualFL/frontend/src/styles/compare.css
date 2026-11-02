@@ -1,0 +1,33 @@
+.compare-picker {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 10px;
+  margin: 20px 0;
+}
+.compare-picker > label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  padding: 11px 12px;
+  border: 1px solid #e3eaed;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.compare-picker > label > span {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.compare-picker strong {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--muted);
+}
+.comparison-note {
+  font-size: 14px;
+  color: var(--muted);
+  padding: 18px 0 0;
+  line-height: 1.8;
+}

@@ -1,0 +1,94 @@
+.topology-panel {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: #fafcfd;
+}
+.topology-subbar {
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 17px;
+  background: #fafcfd;
+  font-size: 13px;
+  color: var(--muted);
+}
+.topology-subbar > span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.legend-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 2px;
+  display: inline-block;
+}
+.legend-dot.normal {
+  background: #799b9a;
+}
+.legend-dot.attack {
+  background: #cc7c71;
+  margin-left: 10px;
+}
+.topology-subbar .rt-Button {
+  font-size: 13px;
+  gap: 5px;
+}
+.topology-canvas {
+  height: 430px;
+  position: relative;
+}
+.react-flow__renderer {
+  background: #fafcfd;
+}
+.react-flow__node:focus-visible {
+  outline: 2px solid var(--accent);
+}
+.react-flow__handle {
+  opacity: 0;
+  pointer-events: none;
+}
+.react-flow__edge-path {
+  transition: stroke 0.2s;
+}
+.react-flow__controls {
+  box-shadow: 0 1px 4px #3445520c !important;
+  border: 1px solid #e0e6ea;
+  border-radius: 6px;
+  overflow: hidden;
+  bottom: 13px;
+  left: 5px;
+}
+.react-flow__controls-button {
+  border-color: #e6ecef !important;
+  background: #fff !important;
+  width: 24px !important;
+  height: 24px !important;
+  padding: 6px !important;
+  color: #657680;
+}
+.react-flow__controls-button:hover {
+  background: #eef4f2 !important;
+}
+.react-flow__attribution {
+  font-size: 7px !important;
+  color: #6c7c85 !important;
+  background: #fafcfd !important;
+}
+.canvas-hint {
+  position: absolute;
+  bottom: 13px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: #fafcfd;
+  color: var(--muted);
+  font-size: 13px;
+  padding: 4px 7px;
+  white-space: nowrap;
+  pointer-events: none;
+}

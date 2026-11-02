@@ -1,0 +1,9 @@
+name: visualfl
+channels:
+  - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main
+  - nodefaults
+dependencies:
+  - python=3.12
+  - pip
+# Install Python packages separately from requirements.txt.
+# Node.js and frontend dependencies are managed by npm.

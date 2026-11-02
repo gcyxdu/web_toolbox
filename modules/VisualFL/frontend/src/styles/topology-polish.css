@@ -1,0 +1,278 @@
+.eva-icon {
+  display: inline-block;
+  flex-shrink: 0;
+  vertical-align: middle;
+  background: none !important;
+}
+.nav-item > .eva-icon {
+  color: #80939c;
+}
+.nav-item.active > .eva-icon {
+  color: #286e64;
+}
+.brand-mark {
+  background: linear-gradient(145deg, #3b8c7c, #24594f);
+  box-shadow: 0 3px 9px #24594f20;
+}
+.topology-panel {
+  background: #f7fafb;
+  border-color: #dfe9eb;
+}
+.topology-canvas .react-flow__renderer {
+  background: radial-gradient(ellipse at center, #fff 0%, #f4f9fa 90%);
+}
+.client-node {
+  width: 160px;
+  min-height: 78px;
+  border: 1px solid #d9e5e8;
+  border-radius: 12px;
+  background: linear-gradient(155deg, #fff, #f8fbfc);
+  box-shadow: 0 4px 12px #314f5e09;
+  overflow: visible;
+}
+.client-node-top {
+  padding: 12px 11px 6px;
+  gap: 9px;
+}
+.node-icon {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  color: #42556a;
+  background: transparent;
+}
+.client-node strong {
+  font-size: 16px;
+  font-weight: 550;
+}
+.client-node-bottom {
+  padding: 0 11px 11px;
+  gap: 7px;
+  font-size: 12px;
+}
+.client-node-bottom .mono {
+  font-size: 13px;
+}
+.node-role {
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 11px;
+  line-height: 1.35;
+}
+.node-role.normal {
+  color: #627f91;
+  background: #eef4f7;
+}
+.node-role.attacker {
+  color: #a65e55;
+  background: #f9ece9;
+}
+.client-node.is-attacker {
+  border-color: #dec0ba;
+  background: linear-gradient(150deg, #fff, #fcf5f3);
+}
+.client-node.is-attacker .node-icon {
+  color: #70504e;
+  background: transparent;
+}
+.client-node.is-selected {
+  border-color: #4d9687;
+  box-shadow:
+    0 0 0 3px #448d811c,
+    0 6px 18px #2d665c12;
+}
+.client-node.is-attacker.is-selected {
+  border-color: #cc7c71;
+  box-shadow: 0 0 0 3px #cc7c711c;
+}
+.client-node.is-training .node-icon {
+  color: #2c7c69;
+  background: #e3f3eb;
+}
+.server-node {
+  width: 180px;
+  min-height: 170px;
+  padding: 16px 14px 0;
+  border: 1px solid #b9d9d2;
+  border-radius: 16px;
+  background: linear-gradient(160deg, #fff, #edf7f3);
+  box-shadow: 0 8px 24px #2b6e6412;
+  overflow: visible;
+}
+.server-node-icon {
+  width: 54px;
+  height: 48px;
+  border-radius: 13px;
+  background: #dcefe7;
+  color: #357b69;
+  margin-bottom: 9px;
+}
+.server-node strong {
+  font-size: 18px;
+}
+.server-algorithm {
+  margin: 5px 0 3px;
+  font-size: 13px;
+}
+.server-round {
+  font-size: 12px;
+  color: #7d9c93;
+  margin-bottom: 10px;
+}
+.server-phase {
+  width: calc(100% + 28px);
+  border-radius: 0 0 15px 15px;
+  background: #e6f2ed;
+  border-color: #d8e9e2;
+  font-size: 13px;
+}
+.server-node.is-selected {
+  border-color: #4f9484;
+  box-shadow:
+    0 0 0 4px #4d968714,
+    0 8px 24px #2b6e6412;
+}
+.topology-canvas .react-flow__handle {
+  opacity: 1;
+  width: 7px;
+  height: 7px;
+  min-width: 0;
+  min-height: 0;
+  background: #fff;
+  border: 1.5px solid #9ebfb8;
+}
+.topology-canvas .react-flow__edge-path {
+  stroke-linecap: round;
+}
+.topology-canvas .react-flow__controls {
+  border-radius: 9px;
+  box-shadow: 0 3px 12px #304f5b0c !important;
+}
+.legend-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+.client-grid > button {
+  border-radius: 10px;
+}
+.client-grid > button > .eva-icon {
+  color: #5e8c88;
+  background-color: currentColor;
+}
+.dataset-split {
+  font-size: 13px;
+  color: #658075;
+  padding: 8px;
+  background: #f0f6f3;
+  border-radius: 5px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .react-flow__edge.animated path {
+    animation: none !important;
+  }
+  .client-node,
+  .server-node {
+    transition: none;
+  }
+}
+.model-detail {
+  font-size: 12px;
+  color: #7a8a8d;
+  margin: 0 0 10px;
+}
+.dataset-distribution {
+  max-height: 270px;
+  overflow-y: auto;
+}
+.dataset-distribution > div > span:first-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.digit-examples figcaption {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.server-algorithm {
+  font-size: 12px;
+}
+.histogram-group-note {
+  font-size: 11px;
+  color: #83938f;
+  font-weight: 400;
+}
+
+.client-node .node-icon {
+  flex-shrink: 0;
+}
+.client-device-icon {
+  display: block;
+  flex-shrink: 0;
+}
+.client-grid > button > .client-device-icon {
+  color: #42556a;
+}
+.client-grid > button.is-attacker {
+  border-color: #dec0ba;
+  background: #fcf5f3;
+}
+.client-grid > button.is-attacker > .client-device-icon {
+  color: #70504e;
+}
+.client-grid > button.is-attacker.selected {
+  border-color: #cc7c71;
+}
+.layersift-preset {
+  padding: 12px;
+  margin-bottom: 14px;
+  background: #f3f7f7;
+  border: 1px solid #e0eaea;
+  border-radius: 7px;
+  font-size: 13px;
+  color: #5f777d;
+}
+.layersift-layer-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 8px 0 10px;
+}
+.layersift-layer-list strong {
+  font-size: 12px;
+  font-weight: 500;
+  color: #316b64;
+  padding: 3px 7px;
+  background: #e3efec;
+  border-radius: 4px;
+}
+.layersift-preset .detail-list {
+  margin: 0;
+}
+.layersift-round-result {
+  margin-left: 16px;
+  color: #316b64;
+  font-size: 12px;
+}
+.client-node .filtered-icon,
+.node-selection.excluded {
+  color: #a77a45;
+}
+.node-selection.included {
+  color: #357c6c;
+}
+.node-selection {
+  font-size: 12px;
+}
+.topology-subbar {
+  flex-wrap: wrap;
+}
+@media (max-width: 639px) {
+  .layersift-round-result {
+    display: block;
+    margin: 5px 0 0;
+  }
+}

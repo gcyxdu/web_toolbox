@@ -1,0 +1,169 @@
+:root {
+  font-family: 'Microsoft YaHei UI', 'Microsoft YaHei', sans-serif;
+  color: #111111;
+  background: #ffffff;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  --canvas: #ffffff;
+  --panel: #ffffff;
+  --ink: #111111;
+  --muted: #a1a1a1;
+  --border: #ececec;
+  --accent: #2c6d62;
+  --accent-soft: #edf5f2;
+  --amber: #a56e39;
+  --radius: 9px;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+}
+button,
+input,
+select {
+  font: inherit;
+}
+button,
+a,
+input,
+select {
+  -webkit-tap-highlight-color: transparent;
+}
+button {
+  cursor: pointer;
+}
+button:disabled {
+  cursor: not-allowed;
+}
+a {
+  color: inherit;
+  text-decoration: none;
+}
+button {
+  color: inherit;
+}
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid #2c6d62;
+  outline-offset: 3px;
+}
+::selection {
+  background: #dcebe7;
+}
+.radix-themes {
+  --default-font-family: 'Microsoft YaHei UI', 'Microsoft YaHei', sans-serif;
+  --code-font-family: 'Microsoft YaHei UI', 'Microsoft YaHei', sans-serif;
+  --heading-font-family: var(--default-font-family);
+  --accent-9: #2c6d62;
+  --accent-10: #245b52;
+  --accent-11: #28665c;
+  --accent-a9: #2c6d62;
+  --accent-contrast: #fff;
+  --focus-8: #6e9b91;
+  --radius-2: 5px;
+  --radius-3: 7px;
+  --radius-4: 9px;
+}
+.mono,
+code {
+  font-family: 'Microsoft YaHei UI', 'Microsoft YaHei', sans-serif;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.035em;
+}
+.muted {
+  color: var(--muted);
+}
+.teal {
+  color: var(--accent);
+}
+.amber {
+  color: var(--amber);
+}
+.meta-separator {
+  display: inline-block;
+  width: 1px;
+  height: 10px;
+  background: #d7e0e5;
+  margin: 0 10px;
+  vertical-align: middle;
+}
+.subtle-label {
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 400;
+  white-space: nowrap;
+}
+.text-button {
+  border: 0;
+  background: none;
+  color: var(--accent);
+  font-size: 14px;
+  padding: 0;
+  margin: 0 0 12px;
+}
+.field-note {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.7;
+}
+.status-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  flex-shrink: 0;
+  background: #9ca8af;
+  border-radius: 50%;
+}
+.status-dot.available {
+  background: var(--accent);
+}
+.inline-warning {
+  font-size: 14px;
+  color: #946125;
+  line-height: 1.7;
+}
+.rt-Button {
+  white-space: nowrap;
+}
+.rt-SelectTrigger {
+  font-size: 15px;
+  min-height: 32px;
+}
+.rt-TextFieldRoot {
+  font-size: 15px;
+  min-height: 32px;
+}
+.rt-TextFieldInput::placeholder {
+  color: var(--muted);
+}
+.rt-DialogContent {
+  font-size: 13px;
+}
+.spin {
+  animation: spin 1.2s linear infinite;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    scroll-behavior: auto !important;
+    transition: none !important;
+  }
+}

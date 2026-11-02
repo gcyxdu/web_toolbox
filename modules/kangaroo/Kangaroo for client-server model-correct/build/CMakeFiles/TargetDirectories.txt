@@ -1,0 +1,4 @@
+/home/pigeon/Desktop/论文实验代码集合/Kangaroo/Kangaroo for client-server model-correct/build/CMakeFiles/rebuild_cache.dir
+/home/pigeon/Desktop/论文实验代码集合/Kangaroo/Kangaroo for client-server model-correct/build/CMakeFiles/edit_cache.dir
+/home/pigeon/Desktop/论文实验代码集合/Kangaroo/Kangaroo for client-server model-correct/build/CMakeFiles/nonexamples.dir
+/home/pigeon/Desktop/论文实验代码集合/Kangaroo/Kangaroo for client-server model-correct/build/CMakeFiles/examples.dir

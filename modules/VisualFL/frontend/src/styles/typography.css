@@ -1,0 +1,103 @@
+:root {
+  --workbench-font:
+    'Microsoft YaHei UI', 'Microsoft YaHei', 'PingFang SC', 'Noto Sans SC', sans-serif;
+  font-family: var(--workbench-font);
+  font-synthesis: weight;
+  font-size: 16px;
+}
+.radix-themes {
+  --default-font-family: var(--workbench-font);
+  --heading-font-family: var(--workbench-font);
+  --code-font-family: var(--workbench-font);
+  --font-size-1: 14px;
+  --font-size-2: 15px;
+  --font-size-3: 16px;
+  font-family: var(--workbench-font);
+}
+.mono,
+code,
+.experiment-symbol,
+.dataset-line strong,
+.method-initial,
+.histogram-column > span {
+  font-family: var(--workbench-font);
+  letter-spacing: 0;
+  font-variant-numeric: tabular-nums;
+}
+.rt-Button,
+.rt-SelectTrigger,
+.rt-TextFieldRoot,
+.field .rt-TextFieldRoot,
+.field .rt-SelectTrigger,
+.field > label,
+.switch-row,
+.detail-list > div {
+  font-size: 15px;
+}
+.settings-section h3,
+.inspector-heading strong,
+.panel-title strong {
+  font-size: 16px;
+}
+.field > label {
+  color: #485f6c;
+}
+.field-note,
+.info-note,
+.subtle-label {
+  display: none;
+}
+.workspace-identity small,
+.recent-heading > .mono {
+  display: none;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.nav-item {
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+.nav-item.active {
+  font-weight: 600;
+}
+.new-experiment {
+  font-size: 15px !important;
+  font-weight: 500;
+}
+.recent-toggle {
+  font-size: 15px;
+  font-weight: 500;
+}
+.recent-run strong {
+  font-size: 14px;
+  font-weight: 500;
+}
+.panel-title strong,
+.settings-section h3,
+.inspector-heading strong {
+  font-weight: 600;
+}
+.run-identity strong {
+  font-weight: 600;
+}
+.field > label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #4f606e;
+}
+.rt-Button,
+.rt-SelectTrigger,
+.rt-TextFieldRoot {
+  font-weight: 500;
+}

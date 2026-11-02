@@ -1,0 +1,100 @@
+@media (min-width: 640px) and (max-width: 1100px) {
+  .app-shell.is-workbench {
+    grid-template-columns: 72px minmax(0, 1fr);
+  }
+  .is-workbench .main-content {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+  .workbench-grid {
+    grid-template-columns: minmax(0, 1fr);
+    position: relative;
+  }
+  .inspector {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: min(340px, calc(100% - 12px));
+    z-index: 8;
+    box-shadow: -8px 0 22px #30465012;
+  }
+.run-toolbar {
+    flex-wrap: nowrap;
+  }
+  .run-identity strong {
+    max-width: 210px;
+  }
+}
+.client-node {
+  width: 138px;
+  line-height: 1.2;
+  min-height: 58px;
+}
+.client-node-top {
+  padding: 8px 9px 4px;
+  gap: 6px;
+}
+.client-node strong {
+  font-size: 16px;
+}
+.client-node-bottom {
+  padding: 0 9px 7px 32px;
+  font-size: 14px;
+}
+.client-node-bottom .mono {
+  font-size: 14px;
+}
+.server-node strong {
+  font-size: 18px;
+}
+.server-algorithm,
+.server-phase {
+  font-size: 14px;
+}
+@media (min-width: 640px) and (max-height: 850px) {
+  .is-workbench .recent-heading {
+    margin-top: 22px;
+  }
+  .is-workbench .sidebar-footer {
+    padding-top: 16px;
+  }
+}
+.workspace-identity strong {
+  white-space: nowrap;
+}
+.recent-run small {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+@media (max-width: 639px) {
+  .workbench-page {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .inspector .settings-content {
+    display: block;
+  }
+  .inspector-tabs .rt-TabsTrigger {
+    font-size: 14px;
+  }
+.run-identity strong {
+    max-width: 195px;
+    font-size: 14px;
+  }
+  .run-identity > div > span {
+    font-size: 12px;
+  }
+  .metric-charts {
+    display: block;
+  }
+  .topology-canvas {
+    height: 330px;
+  }
+  .inspector {
+    position: static;
+    width: auto;
+  }
+}

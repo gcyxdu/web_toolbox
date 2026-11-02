@@ -1,0 +1,43 @@
+#!/bin/bash
+
+scripts=("WIBreast.sh" "stroke.sh" "bank.sh")
+
+if [ "$#" -ne 1 ]; then
+  echo "No script specified. Randomly selecting one..."
+  selected_script=${scripts[$RANDOM % ${#scripts[@]}]}
+  echo "Randomly selected script: $selected_script"
+else
+  selected_script="$1"  
+  if [[ ! " ${scripts[@]} " =~ " ${selected_script} " ]]; then
+    echo "Invalid argument. Please use one of {WIBreast.sh|stroke.sh|bank.sh}"
+    exit 1
+  fi
+fi
+
+echo "Selected script: $selected_script"
+
+current_dir=$(pwd)
+
+cd ./server || { echo "Failed to enter ./server directory"; exit 1; }
+make clean
+make
+if [ $? -ne 0 ]; then
+  echo "Failed to build in ./server directory"
+  exit 1
+fi
+
+cd "$current_dir" || { echo "Failed to return to the original directory"; exit 1; }
+make clean
+make
+if [ $? -ne 0 ]; then
+  echo "Failed to build in the original directory"
+  exit 1
+fi
+
+./$selected_script
+if [ $? -ne 0 ]; then
+  echo "Failed to run the script $selected_script"
+  exit 1
+fi
+
+echo "Script $selected_script executed successfully"

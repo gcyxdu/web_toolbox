@@ -44,13 +44,28 @@ a { color: inherit; text-decoration: none; }
 }
 
 .nav a {
+  position: relative;
   font-size: 14px;
   color: var(--mute);
+  padding: 4px 0;
 }
 
-.nav a:hover,
+.nav a:hover {
+  color: var(--ink);
+}
+
 .nav a.is-on {
   color: var(--ink);
+}
+
+.nav a.is-on::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -22px;
+  height: 1px;
+  background: var(--ink);
 }
 
 .stage {

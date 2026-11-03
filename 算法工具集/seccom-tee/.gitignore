@@ -1,0 +1,63 @@
+# Workspace and IDE files
+.devkit/
+.readme-push-temp/
+.vscode/
+.idea/
+**/.vscode/
+**/.idea/
+**/.cache/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Logs, temporary files, and profiling output
+*.log
+*.tmp
+*.bak
+*.swp
+*.swo
+gmon.out
+
+# Native build intermediates
+*.o
+*.obj
+*.d
+*.dep
+*.gcno
+*.gcda
+*.gcov
+a.out
+
+# CMake-generated files
+**/build/
+**/CMakeFiles/
+**/CMakeCache.txt
+**/cmake_install.cmake
+**/CTestTestfile.cmake
+**/Makefile.cmake
+**/compile_commands.json
+
+# Intel SGX build outputs
+SGX/**/.config_*
+SGX/**/app
+SGX/**/enclave.so
+SGX/**/enclave.signed.so
+SGX/**/TestEnclave.so
+SGX/**/TestEnclave.signed.so
+SGX/**/gcc_output.txt
+
+# TrustZone/iTrustee deployment artifacts
+Trustzone/**/cloud/*.sec
+Trustzone/**/cloud/libcombine.so
+Trustzone/**/cloud/manifest.txt
+
+# Signing material and generated configuration
+Trustzone/**/cloud/TA_cert/private_key.pem
+Trustzone/**/cloud/signed_config/config

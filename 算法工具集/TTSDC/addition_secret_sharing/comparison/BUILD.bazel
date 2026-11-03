@@ -1,0 +1,88 @@
+package(default_visibility = ["//visibility:public"])
+
+cc_library(
+    name = "types",
+    hdrs = ["types.h"],
+    deps = [
+        "@yacl//yacl/base",
+    ],
+)
+
+cc_library(
+    name = "ot_helper",
+    hdrs = ["ot_helper.h"],
+    srcs = ["ot_helper.cc"],
+    deps = [
+        ":types",
+        "@com_google_absl//absl/types:span",
+
+        "@yacl//yacl/base",
+        "@yacl//yacl/link",
+        "@yacl//yacl/crypto/rand",
+        "@yacl//yacl/crypto/tools:prg",
+        "@yacl//yacl/kernel/algorithms:base_ot",
+        "@yacl//yacl/kernel/algorithms:iknp_ote",
+    ],
+)
+
+cc_library(
+    name = "boolean_and",
+    hdrs = ["and.h"],
+    srcs = ["and.cc"],
+    deps = [
+        ":types",
+        ":ot_helper",
+        "@com_google_absl//absl/types:span",
+        "@yacl//yacl/base",
+        "@yacl//yacl/link",
+        "@yacl//yacl/crypto/rand",
+    ],
+)
+
+cc_library(
+    name = "b2a",
+    hdrs = ["b2a.h"],
+    srcs = ["b2a.cc"],
+    deps = [
+        ":types",
+        ":ot_helper",
+        "@com_google_absl//absl/types:span",
+        "@yacl//yacl/base",
+        "@yacl//yacl/link",
+        "@yacl//yacl/crypto/rand",
+    ],
+)
+
+cc_library(
+    name = "compare",
+    hdrs = ["compare.h"],
+    srcs = ["compare.cc"],
+    deps = [
+        ":types",
+        ":boolean_and",
+        ":b2a",
+        "@yacl//yacl/base",
+        "@yacl//yacl/link",
+        "@yacl//yacl/crypto/rand",
+    ],
+)
+
+cc_test(
+    name = "compare_test",
+    srcs = ["compare_test.cc"],
+    deps = [
+        ":compare",
+        "@yacl//yacl/link:test_util",
+        "@com_google_googletest//:gtest_main",
+    ],
+)
+
+cc_binary(
+    name = "compare_benchmark",
+    srcs = ["compare_benchmark.cc"],
+    deps = [
+        ":compare",
+        "@yacl//yacl/link:test_util",
+        "@com_github_google_benchmark//:benchmark_main",
+    ],
+)

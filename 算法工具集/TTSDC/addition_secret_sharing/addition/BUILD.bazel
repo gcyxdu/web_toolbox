@@ -1,0 +1,32 @@
+package(default_visibility = ["//visibility:public"])
+
+cc_library(
+    name = "two_party_ss_add",
+    hdrs = ["two_party_ss_add.h"],
+    srcs = ["two_party_ss_add.cc"],
+    deps = [
+        "@yacl//yacl/base",
+        "@yacl//yacl/crypto/rand",
+        "@yacl//yacl/link",
+    ],
+)
+
+cc_test(
+    name = "two_party_ss_add_test",
+    srcs = ["two_party_ss_add_test.cc"],
+    deps = [
+        ":two_party_ss_add",
+        "@yacl//yacl/link:test_util",
+        "@com_google_googletest//:gtest_main",
+    ],
+)
+
+cc_binary(
+    name = "two_party_ss_add_benchmark",
+    srcs = ["two_party_ss_add_benchmark.cc"],
+    deps = [
+        ":two_party_ss_add",
+        "@yacl//yacl/link:test_util",
+        "@com_github_google_benchmark//:benchmark_main",
+    ],
+)

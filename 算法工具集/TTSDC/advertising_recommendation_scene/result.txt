@@ -1,0 +1,44 @@
+The version of SecretFlow: 1.4.0b0
+
+Outsourcing time with N
+2025-11-18 15:12:27,935 INFO worker.py:1538 -- Started a local Ray instance.
+n = 20000; Outsourcing time: 25.67 ms, Size of tree: 9.6171 MB
+n = 30000; Outsourcing time: 9.85 ms, Size of tree: 16.9073 MB
+n = 40000; Outsourcing time: 19.87 ms, Size of tree: 25.2759 MB
+n = 50000; Outsourcing time: 24.43 ms, Size of tree: 29.6993 MB
+n = 60000; Outsourcing time: 29.98 ms, Size of tree: 34.4078 MB
+Outsourcing time with beta
+2025-11-18 17:11:11,527 INFO worker.py:1538 -- Started a local Ray instance.
+beta = 16; Outsourcing time: 30.28 ms, Size of tree: 16.9073 MB
+beta = 19; Outsourcing time: 12.07 ms, Size of tree: 17.0604 MB
+beta = 22; Outsourcing time: 12.34 ms, Size of tree: 17.2134 MB
+beta = 25; Outsourcing time: 12.60 ms, Size of tree: 17.3665 MB
+beta = 28; Outsourcing time: 11.92 ms, Size of tree: 17.5195 MB
+Query encryption time with beta
+2025-11-19 10:48:22,414 INFO worker.py:1538 -- Started a local Ray instance.
+beta = 16; Query encryption time: 2.96 ms, Size: 768.00 B
+beta = 19; Query encryption time: 1.82 ms, Size: 912.00 B
+beta = 22; Query encryption time: 2.59 ms, Size: 1056.00 B
+beta = 25; Query encryption time: 3.72 ms, Size: 1200.00 B
+beta = 28; Query encryption time: 3.98 ms, Size: 1344.00 B
+Query processing with N
+2025-11-19 10:52:27,934 INFO worker.py:1538 -- Started a local Ray instance.
+n = 20000; Query time: 16584.76 ms, Comm: 49.1848 MB
+n = 30000; Query time: 27361.64 ms, Comm: 80.9400 MB
+n = 40000; Query time: 39839.90 ms, Comm: 117.9764 MB
+n = 50000; Query time: 46449.15 ms, Comm: 138.4696 MB
+n = 60000; Query time: 56452.93 ms, Comm: 169.4284 MB
+Query processing with beta
+2025-11-19 11:23:45,080 INFO worker.py:1538 -- Started a local Ray instance.
+beta = 16; Query time: 27081.78 ms, Comm: 80.9400 MB
+beta = 19; Query time: 30549.83 ms, Comm: 95.5672 MB
+beta = 22; Query time: 33831.36 ms, Comm: 110.1944 MB
+beta = 25; Query time: 36046.98 ms, Comm: 124.8215 MB
+beta = 28; Query time: 40452.07 ms, Comm: 139.4487 MB
+Query processing with range
+2025-11-19 11:51:54,357 INFO worker.py:1538 -- Started a local Ray instance.
+range = 200; Query time: 27815.35 ms, Comm: 86.7546 MB
+range = 400; Query time: 27051.08 ms, Comm: 80.8579 MB
+range = 600; Query time: 27406.99 ms, Comm: 80.9572 MB
+range = 800; Query time: 24712.57 ms, Comm: 70.2107 MB
+range = 1000; Query time: 23412.19 ms, Comm: 59.9488 MB

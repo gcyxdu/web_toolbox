@@ -1,0 +1,29 @@
+#pragma once
+
+
+
+#define BASIC_TEST_ALL
+
+#ifdef BASIC_TEST_ALL
+#define SMP_FUNCTION_TEST
+#define SMP_PERFORMANCE_TEST
+#define THREE_SMP_FUNCTION_TEST
+#define THREE_SMP_PERFORMANCE_TEST
+#define ODRELU_FUNCTION_TEST
+#define ODRELU_PERFORMANCE_TEST
+#define RELU_FUNCTION_TEST
+#define RELU_PERFORMANCE_TEST
+#endif
+
+
+
+
+
+
+
+
+
+
+#define PARTY0 0
+#define PARTY1 1
+#define CLIENT

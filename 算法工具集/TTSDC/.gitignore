@@ -1,0 +1,86 @@
+# Python 相关
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+*.whl
+
+# 虚拟环境
+venv/
+env/
+ENV/
+.venv/
+.ENV/
+
+# IDE 配置文件
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.pydevproject
+.settings/
+*.sublime-project
+*.sublime-workspace
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb
+
+# 操作系统文件
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# 日志文件
+*.log
+*.log.*
+
+# 临时文件
+*.tmp
+*.bak
+*.cache
+*.swp
+*.swo
+
+# 编译输出
+*.o
+*.a
+*.lib
+*.dll
+*.exe
+
+# 测试覆盖率
+.coverage
+htmlcov/
+.pytest_cache/
+.tox/
+
+# 环境变量文件
+.env
+.env.local
+.env.*.local
+
+# 数据文件（如果需要忽略某些数据）
+# *.csv
+# *.data
+
+# SEAL 相关编译文件（保险理赔场景）
+*.so
+seal.*.so
+
+# 其他
+*.orig
+*.rej
+.cache/
+

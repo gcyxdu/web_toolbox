@@ -1,0 +1,1247 @@
+/*
+ * Copyright (c) 2026 openHiTLS. All Rights Reserved.
+ *
+ * PQCP is licensed under the Mulan PSL v2.
+ * You can use this software according to the terms and conditions of the Mulan PSL v2.
+ * You may obtain a copy of Mulan PSL v2 at:
+ *
+ *     http://license.coscl.org.cn/MulanPSL2
+ *
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+ * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+ * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+ * See the Mulan PSL v2 for more details.
+ */
+
+/* BEGIN_HEADER */
+#include <stdlib.h>
+#include <stdio.h>
+#include <stdint.h>
+#include <string.h>
+
+#include "bsl_err.h"
+#include "crypt_errno.h"
+#include "bsl_sal.h"
+#include "bsl_params.h"
+#include "crypt_types.h"
+#include "crypt_eal_pkey.h"
+#include "crypt_eal_provider.h"
+#include "pqcp_provider.h"
+#include "pqcp_types.h"
+#include "pqcp_err.h"
+#include "stub_utils.h"
+/* END_HEADER */
+
+#ifdef PQCP_COMPOSITE_SIGN
+#define TEST_COMPOSITE_BUFFER_SIZE 16384U
+
+STUB_DEFINE_RET1(void *, BSL_SAL_Malloc, uint32_t);
+
+static CRYPT_EAL_PkeyCtx *NewCompositeSignCtx(int algId)
+{
+    CRYPT_EAL_PkeyCtx *ctx = CRYPT_EAL_ProviderPkeyNewCtx(NULL, PQCP_PKEY_COMPOSITE_SIGN,
+        CRYPT_EAL_PKEY_SIGN_OPERATE, "provider=pqcp");
+    if (ctx == NULL) {
+        return NULL;
+    }
+
+    int32_t ret = CRYPT_EAL_PkeyCtrl(ctx, CRYPT_CTRL_SET_PARA_BY_ID, &algId, sizeof(algId));
+    if (ret != PQCP_SUCCESS) {
+        CRYPT_EAL_PkeyFreeCtx(ctx);
+        return NULL;
+    }
+    return ctx;
+}
+
+#ifndef PQCP_AIGIS_SIG
+static int IsAigisCompositeAlg(int algId)
+{
+    switch (algId) {
+        case PQCP_COMPOSITE_AIGIS_SIG_SM3_I_SM2:
+        case PQCP_COMPOSITE_AIGIS_SIG_SM3_II_SM2:
+        case PQCP_COMPOSITE_AIGIS_SIG_SM3_III_SM2:
+        case PQCP_COMPOSITE_AIGIS_SIG_SHA3_I_SM2:
+        case PQCP_COMPOSITE_AIGIS_SIG_SHA3_II_SM2:
+        case PQCP_COMPOSITE_AIGIS_SIG_SHA3_III_SM2:
+            return 1;
+        default:
+            return 0;
+    }
+}
+#define SKIP_IF_AIGIS_COMPOSITE_DISABLED(algId) \
+    do {                                        \
+        if (IsAigisCompositeAlg(algId)) {       \
+            SKIP_TEST();                        \
+        }                                       \
+    } while (0)
+#else
+#define SKIP_IF_AIGIS_COMPOSITE_DISABLED(algId) ((void)(algId))
+#endif
+
+#if defined(__x86_64__) || defined(_M_X64) || defined(__i386__) || defined(_M_IX86)
+#define SKIP_IF_NOT_X86() ((void)0)
+#else
+#define SKIP_IF_NOT_X86() SKIP_TEST()
+#endif
+#endif
+
+/* @
+* @test  SDV_CRYPTO_PQCP_COMPOSITE_KEYGEN_API_TC001
+* @spec  -
+* @title  PQCP Composite Sign Key Generation API Test
+* @precon  nan
+* @brief  1. Create provider context
+*         2. Set algorithm ID
+*         3. Generate key pair and verify
+* @expect  All operations return PQCP_SUCCESS
+* @prior  nan
+* @auto  FALSE
+@ */
+/* BEGIN_CASE */
+void SDV_CRYPTO_PQCP_COMPOSITE_KEYGEN_API_TC001(int algId)
+{
+#ifdef PQCP_COMPOSITE_SIGN
+    SKIP_IF_AIGIS_COMPOSITE_DISABLED(algId);
+    TestMemInit();
+    TestRandInitEx(NULL);
+    CRYPT_EAL_PkeyCtx *ctx = NULL;
+
+    ctx = CRYPT_EAL_ProviderPkeyNewCtx(NULL, PQCP_PKEY_COMPOSITE_SIGN, CRYPT_EAL_PKEY_SIGN_OPERATE, "provider=pqcp");
+    ASSERT_TRUE(ctx != NULL);
+
+    int32_t ret = CRYPT_EAL_PkeyCtrl(ctx, CRYPT_CTRL_SET_PARA_BY_ID, &algId, sizeof(algId));
+    ASSERT_EQ(ret, PQCP_SUCCESS);
+
+    ret = CRYPT_EAL_PkeyGen(ctx);
+    ASSERT_EQ(ret, PQCP_SUCCESS);
+
+    uint32_t pubKeyLen = 0;
+    ret = CRYPT_EAL_PkeyCtrl(ctx, CRYPT_CTRL_GET_PUBKEY_LEN, &pubKeyLen, sizeof(pubKeyLen));
+    ASSERT_EQ(ret, PQCP_SUCCESS);
+    ASSERT_TRUE(pubKeyLen > 0);
+
+    uint32_t prvKeyLen = 0;
+    ret = CRYPT_EAL_PkeyCtrl(ctx, CRYPT_CTRL_GET_PRVKEY_LEN, &prvKeyLen, sizeof(prvKeyLen));
+    ASSERT_EQ(ret, PQCP_SUCCESS);
+    ASSERT_TRUE(prvKeyLen > 0);
+
+EXIT:
+    CRYPT_EAL_PkeyFreeCtx(ctx);
+    TestRandDeInit();
+    return;
+#else 
+    SKIP_TEST();
+    (void)algId;
+#endif
+}
+/* END_CASE */
+
+/* @
+* @test  SDV_CRYPTO_PQCP_COMPOSITE_GET_PRVKEY_API_TC001
+* @spec  -
+* @title  PQCP Composite Sign Get Private Key API Test
+* @precon  nan
+* @brief  1. Create context and generate key pair
+*         2. Get private key
+*         3. Verify key length is valid
+* @expect  All operations return PQCP_SUCCESS
+* @prior  nan
+* @auto  FALSE
+@ */
+/* BEGIN_CASE */
+void SDV_CRYPTO_PQCP_COMPOSITE_GET_PRVKEY_API_TC001(int algId)
+{
+#ifdef PQCP_COMPOSITE_SIGN
+    SKIP_IF_AIGIS_COMPOSITE_DISABLED(algId);
+    TestMemInit();
+    TestRandInitEx(NULL);
+    CRYPT_EAL_PkeyCtx *ctx = NULL;
+    uint8_t prvKeyData[TEST_COMPOSITE_BUFFER_SIZE] = {0};
+
+    ctx = CRYPT_EAL_ProviderPkeyNewCtx(NULL, PQCP_PKEY_COMPOSITE_SIGN, CRYPT_EAL_PKEY_SIGN_OPERATE, "provider=pqcp");
+    ASSERT_TRUE(ctx != NULL);
+
+    int32_t ret = CRYPT_EAL_PkeyCtrl(ctx, CRYPT_CTRL_SET_PARA_BY_ID, &algId, sizeof(algId));
+    ASSERT_EQ(ret, PQCP_SUCCESS);
+
+    ret = CRYPT_EAL_PkeyGen(ctx);
+    ASSERT_EQ(ret, PQCP_SUCCESS);
+
+    BSL_Param prvParams[2] = {
+        {PQCP_PARAM_COMPOSITE_PRVKEY, BSL_PARAM_TYPE_OCTETS, prvKeyData, sizeof(prvKeyData), 0},
+        BSL_PARAM_END
+    };
+    ret = CRYPT_EAL_PkeyGetPrvEx(ctx, prvParams);
+    ASSERT_EQ(ret, PQCP_SUCCESS);
+    ASSERT_TRUE(prvParams[0].useLen > 0);
+
+EXIT:
+    CRYPT_EAL_PkeyFreeCtx(ctx);
+    TestRandDeInit();
+    return;
+#else 
+    SKIP_TEST();
+    (void)algId;
+#endif
+}
+/* END_CASE */
+
+/* @
+* @test  SDV_CRYPTO_PQCP_COMPOSITE_GET_PUBKEY_API_TC001
+* @spec  -
+* @title  PQCP Composite Sign Get Public Key API Test
+* @precon  nan
+* @brief  1. Create context and generate key pair
+*         2. Get public key
+*         3. Verify key length is valid
+* @expect  All operations return PQCP_SUCCESS
+* @prior  nan
+* @auto  FALSE
+@ */
+/* BEGIN_CASE */
+void SDV_CRYPTO_PQCP_COMPOSITE_GET_PUBKEY_API_TC001(int algId)
+{
+#ifdef PQCP_COMPOSITE_SIGN
+    SKIP_IF_AIGIS_COMPOSITE_DISABLED(algId);
+    TestMemInit();
+    TestRandInitEx(NULL);
+    CRYPT_EAL_PkeyCtx *ctx = NULL;
+    uint8_t pubKeyData[TEST_COMPOSITE_BUFFER_SIZE] = {0};
+
+    ctx = CRYPT_EAL_ProviderPkeyNewCtx(NULL, PQCP_PKEY_COMPOSITE_SIGN, CRYPT_EAL_PKEY_SIGN_OPERATE, "provider=pqcp");
+    ASSERT_TRUE(ctx != NULL);
+
+    int32_t ret = CRYPT_EAL_PkeyCtrl(ctx, CRYPT_CTRL_SET_PARA_BY_ID, &algId, sizeof(algId));
+    ASSERT_EQ(ret, PQCP_SUCCESS);
+
+    ret = CRYPT_EAL_PkeyGen(ctx);
+    ASSERT_EQ(ret, PQCP_SUCCESS);
+
+    BSL_Param pubParams[2] = {
+        {PQCP_PARAM_COMPOSITE_PUBKEY, BSL_PARAM_TYPE_OCTETS, pubKeyData, sizeof(pubKeyData), 0},
+        BSL_PARAM_END
+    };
+    ret = CRYPT_EAL_PkeyGetPubEx(ctx, pubParams);
+    ASSERT_EQ(ret, PQCP_SUCCESS);
+    ASSERT_TRUE(pubParams[0].useLen > 0);
+
+EXIT:
+    CRYPT_EAL_PkeyFreeCtx(ctx);
+    TestRandDeInit();
+    return;
+#else 
+    SKIP_TEST();
+    (void)algId;
+#endif
+}
+/* END_CASE */
+
+/* @
+* @test  SDV_CRYPTO_PQCP_COMPOSITE_SET_PRVKEY_API_TC001
+* @spec  -
+* @title  PQCP Composite Sign Set Private Key API Test
+* @precon  nan
+* @brief  1. Create context and generate key pair
+*         2. Get private key
+*         3. Set private key to another context
+*         4. Verify operation succeeds
+* @expect  All operations return PQCP_SUCCESS
+* @prior  nan
+* @auto  FALSE
+@ */
+/* BEGIN_CASE */
+void SDV_CRYPTO_PQCP_COMPOSITE_SET_PRVKEY_API_TC001(int algId)
+{
+#ifdef PQCP_COMPOSITE_SIGN
+    SKIP_IF_AIGIS_COMPOSITE_DISABLED(algId);
+    TestRandInitEx(NULL);
+    TestMemInit();
+    CRYPT_EAL_PkeyCtx *ctx = NULL;
+    CRYPT_EAL_PkeyCtx *ctx2 = NULL;
+    uint8_t prvKeyData[TEST_COMPOSITE_BUFFER_SIZE] = {0};
+
+    ctx = CRYPT_EAL_ProviderPkeyNewCtx(NULL, PQCP_PKEY_COMPOSITE_SIGN, CRYPT_EAL_PKEY_SIGN_OPERATE, "provider=pqcp");
+    ASSERT_TRUE(ctx != NULL);
+
+    ctx2 = CRYPT_EAL_ProviderPkeyNewCtx(NULL, PQCP_PKEY_COMPOSITE_SIGN, CRYPT_EAL_PKEY_SIGN_OPERATE, "provider=pqcp");
+    ASSERT_TRUE(ctx2 != NULL);
+
+    int32_t ret = CRYPT_EAL_PkeyCtrl(ctx, CRYPT_CTRL_SET_PARA_BY_ID, &algId, sizeof(algId));
+    ASSERT_EQ(ret, PQCP_SUCCESS);
+    ret = CRYPT_EAL_PkeyCtrl(ctx2, CRYPT_CTRL_SET_PARA_BY_ID, &algId, sizeof(algId));
+    ASSERT_EQ(ret, PQCP_SUCCESS);
+
+    ret = CRYPT_EAL_PkeyGen(ctx);
+    ASSERT_EQ(ret, PQCP_SUCCESS);
+
+    BSL_Param prvParams[2] = {
+        {PQCP_PARAM_COMPOSITE_PRVKEY, BSL_PARAM_TYPE_OCTETS, prvKeyData, sizeof(prvKeyData), 0},
+        BSL_PARAM_END
+    };
+    ret = CRYPT_EAL_PkeyGetPrvEx(ctx, prvParams);
+    ASSERT_EQ(ret, PQCP_SUCCESS);
+
+    prvParams[0].valueLen = prvParams[0].useLen;
+    ret = CRYPT_EAL_PkeySetPrvEx(ctx2, prvParams);
+    ASSERT_EQ(ret, PQCP_SUCCESS);
+
+EXIT:
+    CRYPT_EAL_PkeyFreeCtx(ctx);
+    CRYPT_EAL_PkeyFreeCtx(ctx2);
+    TestRandDeInit();
+    return;
+#else 
+    SKIP_TEST();
+    (void)algId;
+#endif
+}
+/* END_CASE */
+
+/* @
+* @test  SDV_CRYPTO_PQCP_COMPOSITE_SET_GET_PRVKEY_LEN_API_TC001
+* @spec  -
+* @title  PQCP Composite Sign Set/Get Private Key Length Test
+* @precon  nan
+* @brief  1. Create context and set algorithm
+*         2. Set composite private key whose SM2 private key part is 4 bytes
+*         3. Get private key and verify the returned private key length is 32 + 4 bytes
+* @expect  All operations return PQCP_SUCCESS and get private key useLen is 36
+* @prior  nan
+* @auto  FALSE
+@ */
+/* BEGIN_CASE */
+void SDV_CRYPTO_PQCP_COMPOSITE_SET_GET_PRVKEY_LEN_API_TC001(int algId)
+{
+#ifdef PQCP_COMPOSITE_SIGN
+    SKIP_IF_AIGIS_COMPOSITE_DISABLED(algId);
+    TestRandInitEx(NULL);
+    TestMemInit();
+    CRYPT_EAL_PkeyCtx *ctx = NULL;
+    uint8_t prvKeyData[36] = {
+        0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
+        0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
+        0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17,
+        0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f,
+        0x01, 0x02, 0x03, 0x04
+    };
+    uint8_t getPrvKeyData[64] = {0};
+
+    ctx = CRYPT_EAL_ProviderPkeyNewCtx(NULL, PQCP_PKEY_COMPOSITE_SIGN, CRYPT_EAL_PKEY_SIGN_OPERATE, "provider=pqcp");
+    ASSERT_TRUE(ctx != NULL);
+
+    int32_t ret = CRYPT_EAL_PkeyCtrl(ctx, CRYPT_CTRL_SET_PARA_BY_ID, &algId, sizeof(algId));
+    ASSERT_EQ(ret, PQCP_SUCCESS);
+
+    BSL_Param prvParams[2] = {
+        {PQCP_PARAM_COMPOSITE_PRVKEY, BSL_PARAM_TYPE_OCTETS, prvKeyData, sizeof(prvKeyData), 0},
+        BSL_PARAM_END
+    };
+    ret = CRYPT_EAL_PkeySetPrvEx(ctx, prvParams);
+    ASSERT_EQ(ret, PQCP_SUCCESS);
+
+    BSL_Param getPrvParams[2] = {
+        {PQCP_PARAM_COMPOSITE_PRVKEY, BSL_PARAM_TYPE_OCTETS, getPrvKeyData, sizeof(getPrvKeyData), 0},
+        BSL_PARAM_END
+    };
+    ret = CRYPT_EAL_PkeyGetPrvEx(ctx, getPrvParams);
+    ASSERT_EQ(ret, PQCP_SUCCESS);
+    ASSERT_EQ(getPrvParams[0].useLen, sizeof(prvKeyData));
+    ASSERT_COMPARE("compare prv key", prvKeyData, sizeof(prvKeyData), getPrvKeyData, getPrvParams[0].useLen);
+
+EXIT:
+    CRYPT_EAL_PkeyFreeCtx(ctx);
+    TestRandDeInit();
+    return;
+#else
+    SKIP_TEST();
+    (void)algId;
+#endif
+}
+/* END_CASE */
+
+/* @
+* @test  SDV_CRYPTO_PQCP_COMPOSITE_SET_PUBKEY_API_TC001
+* @spec  -
+* @title  PQCP Composite Sign Set Public Key API Test
+* @precon  nan
+* @brief  1. Create context and generate key pair
+*         2. Get public key
+*         3. Set public key to another context
+*         4. Verify operation succeeds
+* @expect  All operations return PQCP_SUCCESS
+* @prior  nan
+* @auto  FALSE
+@ */
+/* BEGIN_CASE */
+void SDV_CRYPTO_PQCP_COMPOSITE_SET_PUBKEY_API_TC001(int algId)
+{
+#ifdef PQCP_COMPOSITE_SIGN
+    SKIP_IF_AIGIS_COMPOSITE_DISABLED(algId);
+    TestRandInitEx(NULL);
+    TestMemInit();
+    CRYPT_EAL_PkeyCtx *ctx = NULL;
+    CRYPT_EAL_PkeyCtx *ctx2 = NULL;
+    uint8_t pubKeyData[TEST_COMPOSITE_BUFFER_SIZE] = {0};
+
+    ctx = CRYPT_EAL_ProviderPkeyNewCtx(NULL, PQCP_PKEY_COMPOSITE_SIGN, CRYPT_EAL_PKEY_SIGN_OPERATE, "provider=pqcp");
+    ASSERT_TRUE(ctx != NULL);
+
+    ctx2 = CRYPT_EAL_ProviderPkeyNewCtx(NULL, PQCP_PKEY_COMPOSITE_SIGN, CRYPT_EAL_PKEY_SIGN_OPERATE, "provider=pqcp");
+    ASSERT_TRUE(ctx2 != NULL);
+
+    int32_t ret = CRYPT_EAL_PkeyCtrl(ctx, CRYPT_CTRL_SET_PARA_BY_ID, &algId, sizeof(algId));
+    ASSERT_EQ(ret, PQCP_SUCCESS);
+    ret = CRYPT_EAL_PkeyCtrl(ctx2, CRYPT_CTRL_SET_PARA_BY_ID, &algId, sizeof(algId));
+    ASSERT_EQ(ret, PQCP_SUCCESS);
+
+    ret = CRYPT_EAL_PkeyGen(ctx);
+    ASSERT_EQ(ret, PQCP_SUCCESS);
+
+    BSL_Param pubParams[2] = {
+        {PQCP_PARAM_COMPOSITE_PUBKEY, BSL_PARAM_TYPE_OCTETS, pubKeyData, sizeof(pubKeyData), 0},
+        BSL_PARAM_END
+    };
+    ret = CRYPT_EAL_PkeyGetPubEx(ctx, pubParams);
+    ASSERT_EQ(ret, PQCP_SUCCESS);
+
+    pubParams[0].valueLen = pubParams[0].useLen;
+    ret = CRYPT_EAL_PkeySetPubEx(ctx2, pubParams);
+    ASSERT_EQ(ret, PQCP_SUCCESS);
+
+EXIT:
+    CRYPT_EAL_PkeyFreeCtx(ctx);
+    CRYPT_EAL_PkeyFreeCtx(ctx2);
+    TestRandDeInit();
+    return;
+#else 
+    SKIP_TEST();
+    (void)algId;
+#endif
+}
+/* END_CASE */
+
+/* @
+* @test  SDV_CRYPTO_PQCP_COMPOSITE_SET_GET_PUBKEY_LEN_API_TC001
+* @spec  -
+* @title  PQCP Composite Sign Set/Get Public Key Length Test
+* @precon  nan
+* @brief  1. Create context and generate key pair
+*         2. Get public key and set it to another context
+*         3. Get public key from the second context and verify the returned public key length
+* @expect  All operations return PQCP_SUCCESS and get public key useLen is same as the set public key length
+* @prior  nan
+* @auto  FALSE
+@ */
+/* BEGIN_CASE */
+void SDV_CRYPTO_PQCP_COMPOSITE_SET_GET_PUBKEY_LEN_API_TC001(int algId)
+{
+#ifdef PQCP_COMPOSITE_SIGN
+    SKIP_IF_AIGIS_COMPOSITE_DISABLED(algId);
+    TestRandInitEx(NULL);
+    TestMemInit();
+    CRYPT_EAL_PkeyCtx *ctx = NULL;
+    CRYPT_EAL_PkeyCtx *ctx2 = NULL;
+    uint8_t pubKeyData[TEST_COMPOSITE_BUFFER_SIZE] = {0};
+    uint8_t getPubKeyData[TEST_COMPOSITE_BUFFER_SIZE] = {0};
+
+    ctx = CRYPT_EAL_ProviderPkeyNewCtx(NULL, PQCP_PKEY_COMPOSITE_SIGN, CRYPT_EAL_PKEY_SIGN_OPERATE, "provider=pqcp");
+    ASSERT_TRUE(ctx != NULL);
+
+    ctx2 = CRYPT_EAL_ProviderPkeyNewCtx(NULL, PQCP_PKEY_COMPOSITE_SIGN, CRYPT_EAL_PKEY_SIGN_OPERATE, "provider=pqcp");
+    ASSERT_TRUE(ctx2 != NULL);
+
+    int32_t ret = CRYPT_EAL_PkeyCtrl(ctx, CRYPT_CTRL_SET_PARA_BY_ID, &algId, sizeof(algId));
+    ASSERT_EQ(ret, PQCP_SUCCESS);
+    ret = CRYPT_EAL_PkeyCtrl(ctx2, CRYPT_CTRL_SET_PARA_BY_ID, &algId, sizeof(algId));
+    ASSERT_EQ(ret, PQCP_SUCCESS);
+
+    ret = CRYPT_EAL_PkeyGen(ctx);
+    ASSERT_EQ(ret, PQCP_SUCCESS);
+
+    BSL_Param pubParams[2] = {
+        {PQCP_PARAM_COMPOSITE_PUBKEY, BSL_PARAM_TYPE_OCTETS, pubKeyData, sizeof(pubKeyData), 0},
+        BSL_PARAM_END
+    };
+    ret = CRYPT_EAL_PkeyGetPubEx(ctx, pubParams);
+    ASSERT_EQ(ret, PQCP_SUCCESS);
+
+    pubParams[0].valueLen = pubParams[0].useLen;
+    ret = CRYPT_EAL_PkeySetPubEx(ctx2, pubParams);
+    ASSERT_EQ(ret, PQCP_SUCCESS);
+
+    BSL_Param getPubParams[2] = {
+        {PQCP_PARAM_COMPOSITE_PUBKEY, BSL_PARAM_TYPE_OCTETS, getPubKeyData, sizeof(getPubKeyData), 0},
+        BSL_PARAM_END
+    };
+    ret = CRYPT_EAL_PkeyGetPubEx(ctx2, getPubParams);
+    ASSERT_EQ(ret, PQCP_SUCCESS);
+    ASSERT_EQ(getPubParams[0].useLen, pubParams[0].valueLen);
+    ASSERT_COMPARE("compare pub key", pubKeyData, pubParams[0].valueLen, getPubKeyData, getPubParams[0].useLen);
+
+EXIT:
+    CRYPT_EAL_PkeyFreeCtx(ctx);
+    CRYPT_EAL_PkeyFreeCtx(ctx2);
+    TestRandDeInit();
+    return;
+#else
+    SKIP_TEST();
+    (void)algId;
+#endif
+}
+/* END_CASE */
+
+/* @
+* @test  SDV_CRYPTO_PQCP_COMPOSITE_SIGN_VERIFY_API_TC001
+* @spec  -
+* @title  PQCP Composite Sign/Verify API Test
+* @precon  nan
+* @brief  1. Create context and generate key pair
+*         2. Sign a message
+*         3. Verify the signature
+* @expect  All operations return PQCP_SUCCESS
+* @prior  nan
+* @auto  FALSE
+@ */
+/* BEGIN_CASE */
+void SDV_CRYPTO_PQCP_COMPOSITE_SIGN_VERIFY_API_TC001(int algId, Hex *message)
+{
+#ifdef PQCP_COMPOSITE_SIGN
+    SKIP_IF_AIGIS_COMPOSITE_DISABLED(algId);
+    TestRandInitEx(NULL);
+    TestMemInit();
+    CRYPT_EAL_PkeyCtx *ctx = NULL;
+    CRYPT_EAL_PkeyCtx *verifyCtx = NULL;
+    uint8_t pubKeyData[TEST_COMPOSITE_BUFFER_SIZE] = {0};
+    uint8_t signData[TEST_COMPOSITE_BUFFER_SIZE] = {0};
+    uint32_t signLen = sizeof(signData);
+    const char *context = "test sdv composite sign";
+    uint32_t contextLen = strlen(context);
+    ctx = CRYPT_EAL_ProviderPkeyNewCtx(NULL, PQCP_PKEY_COMPOSITE_SIGN, CRYPT_EAL_PKEY_SIGN_OPERATE, "provider=pqcp");
+    ASSERT_TRUE(ctx != NULL);
+
+    verifyCtx = CRYPT_EAL_ProviderPkeyNewCtx(NULL, PQCP_PKEY_COMPOSITE_SIGN, CRYPT_EAL_PKEY_SIGN_OPERATE,
+        "provider=pqcp");
+    ASSERT_TRUE(verifyCtx != NULL);
+
+    int32_t ret = CRYPT_EAL_PkeyCtrl(ctx, CRYPT_CTRL_SET_PARA_BY_ID, &algId, sizeof(algId));
+    ASSERT_EQ(ret, PQCP_SUCCESS);
+    ret = CRYPT_EAL_PkeyCtrl(verifyCtx, CRYPT_CTRL_SET_PARA_BY_ID, &algId, sizeof(algId));
+    ASSERT_EQ(ret, PQCP_SUCCESS);
+    ASSERT_EQ(CRYPT_EAL_PkeyCtrl(ctx, CRYPT_CTRL_SET_CTX_INFO, NULL, contextLen), PQCP_NULL_INPUT);
+    ASSERT_EQ(CRYPT_EAL_PkeyCtrl(ctx, CRYPT_CTRL_SET_CTX_INFO, NULL, 0), PQCP_SUCCESS);
+    ASSERT_EQ(CRYPT_EAL_PkeyCtrl(ctx, CRYPT_CTRL_SET_CTX_INFO, (void *)context, contextLen), PQCP_SUCCESS);
+    ASSERT_EQ(CRYPT_EAL_PkeyCtrl(verifyCtx, CRYPT_CTRL_SET_CTX_INFO, (void *)context, contextLen), PQCP_SUCCESS);
+    ret = CRYPT_EAL_PkeyGen(ctx);
+    ASSERT_EQ(ret, PQCP_SUCCESS);
+
+    BSL_Param pubParams[2] = {
+        {PQCP_PARAM_COMPOSITE_PUBKEY, BSL_PARAM_TYPE_OCTETS, pubKeyData, sizeof(pubKeyData), 0},
+        BSL_PARAM_END
+    };
+    ret = CRYPT_EAL_PkeyGetPubEx(ctx, pubParams);
+    ASSERT_EQ(ret, PQCP_SUCCESS);
+
+    pubParams[0].valueLen = pubParams[0].useLen;
+    ret = CRYPT_EAL_PkeySetPubEx(verifyCtx, pubParams);
+    ASSERT_EQ(ret, PQCP_SUCCESS);
+
+    ret = CRYPT_EAL_PkeySign(ctx, CRYPT_MD_MAX, message->x, message->len, signData, &signLen);
+    ASSERT_EQ(ret, PQCP_SUCCESS);
+
+    ret = CRYPT_EAL_PkeyVerify(verifyCtx, CRYPT_MD_MAX, message->x, message->len, signData, signLen);
+    ASSERT_EQ(ret, PQCP_SUCCESS);
+    ASSERT_EQ(CRYPT_EAL_PkeyCtrl(verifyCtx, CRYPT_CTRL_SET_CTX_INFO, NULL, 0), PQCP_SUCCESS);
+    ret = CRYPT_EAL_PkeyVerify(verifyCtx, CRYPT_MD_MAX, message->x, message->len, signData, signLen);
+    ASSERT_NE(ret, PQCP_SUCCESS);
+    ASSERT_EQ(CRYPT_EAL_PkeyCtrl(verifyCtx, CRYPT_CTRL_SET_CTX_INFO, (void *)context, contextLen), PQCP_SUCCESS);
+    ret = CRYPT_EAL_PkeyVerify(verifyCtx, CRYPT_MD_MAX, message->x, message->len, signData, signLen);
+    ASSERT_EQ(ret, PQCP_SUCCESS);
+EXIT:
+    CRYPT_EAL_PkeyFreeCtx(ctx);
+    CRYPT_EAL_PkeyFreeCtx(verifyCtx);
+    TestRandDeInit();
+    return;
+#else 
+    SKIP_TEST();
+    (void)algId;
+    (void)message;
+#endif
+}
+/* END_CASE */
+
+/* @
+* @test  SDV_CRYPTO_PQCP_COMPOSITE_KEYGEN_MALLOC_STUB_TC001
+* @spec  -
+* @title  PQCP Composite Sign Key Generation Malloc Failure Test
+* @precon  nan
+* @brief  1. Create context and set algorithm
+*         2. Generate key pair once with malloc stub disabled to count allocations
+*         3. Inject malloc failure at each selected allocation point and generate key pair again
+* @expect  Key generation handles malloc failure without crash or memory leak
+* @prior  nan
+* @auto  FALSE
+@ */
+/* BEGIN_CASE */
+void SDV_CRYPTO_PQCP_COMPOSITE_KEYGEN_MALLOC_STUB_TC001(int algId)
+{
+#ifdef PQCP_COMPOSITE_SIGN
+    SKIP_IF_NOT_X86();
+    SKIP_IF_AIGIS_COMPOSITE_DISABLED(algId);
+    TestRandInitEx(NULL);
+    TestMemInit();
+    CRYPT_EAL_PkeyCtx *ctx = NULL;
+    uint32_t totalMallocCount = 0;
+
+    ctx = NewCompositeSignCtx(algId);
+    ASSERT_TRUE(ctx != NULL);
+
+    STUB_REPLACE(BSL_SAL_Malloc, STUB_BSL_SAL_Malloc);
+    STUB_EnableMallocFail(false);
+    STUB_ResetMallocCount();
+
+    int32_t ret = CRYPT_EAL_PkeyGen(ctx);
+    ASSERT_EQ(ret, PQCP_SUCCESS);
+    totalMallocCount = STUB_GetMallocCallCount();
+    ASSERT_TRUE(totalMallocCount > 0);
+
+    CRYPT_EAL_PkeyFreeCtx(ctx);
+    ctx = NULL;
+
+    for (uint32_t i = 0; i < totalMallocCount; i++) {
+        STUB_EnableMallocFail(false);
+        ctx = NewCompositeSignCtx(algId);
+        ASSERT_TRUE(ctx != NULL);
+
+        STUB_ResetMallocCount();
+        STUB_SetMallocFailIndex(i);
+        STUB_EnableMallocFail(true);
+        (void)CRYPT_EAL_PkeyGen(ctx);
+
+        STUB_EnableMallocFail(false);
+        CRYPT_EAL_PkeyFreeCtx(ctx);
+        ctx = NULL;
+        BSL_ERR_ClearError();
+    }
+
+EXIT:
+    STUB_EnableMallocFail(false);
+    STUB_RESTORE(BSL_SAL_Malloc);
+    BSL_ERR_ClearError();
+    CRYPT_EAL_PkeyFreeCtx(ctx);
+    TestRandDeInit();
+    return;
+#else
+    SKIP_TEST();
+    (void)algId;
+#endif
+}
+/* END_CASE */
+
+/* @
+* @test  SDV_CRYPTO_PQCP_COMPOSITE_SIGN_MALLOC_STUB_TC001
+* @spec  -
+* @title  PQCP Composite Sign Malloc Failure Test
+* @precon  nan
+* @brief  1. Create context and generate key pair
+*         2. Sign once with malloc stub disabled to count allocations
+*         3. Inject malloc failure at each selected allocation point and sign again
+* @expect  Sign handles malloc failure without crash or memory leak
+* @prior  nan
+* @auto  FALSE
+@ */
+/* BEGIN_CASE */
+void SDV_CRYPTO_PQCP_COMPOSITE_SIGN_MALLOC_STUB_TC001(int algId, Hex *message)
+{
+#ifdef PQCP_COMPOSITE_SIGN
+    SKIP_IF_NOT_X86();
+    SKIP_IF_AIGIS_COMPOSITE_DISABLED(algId);
+    TestRandInitEx(NULL);
+    TestMemInit();
+    CRYPT_EAL_PkeyCtx *ctx = NULL;
+    uint8_t signData[TEST_COMPOSITE_BUFFER_SIZE] = {0};
+    uint32_t signLen = sizeof(signData);
+    uint32_t totalMallocCount = 0;
+
+    ctx = NewCompositeSignCtx(algId);
+    ASSERT_TRUE(ctx != NULL);
+
+    int32_t ret = CRYPT_EAL_PkeyGen(ctx);
+    ASSERT_EQ(ret, PQCP_SUCCESS);
+
+    STUB_REPLACE(BSL_SAL_Malloc, STUB_BSL_SAL_Malloc);
+    STUB_EnableMallocFail(false);
+    STUB_ResetMallocCount();
+
+    ret = CRYPT_EAL_PkeySign(ctx, CRYPT_MD_MAX, message->x, message->len, signData, &signLen);
+    ASSERT_EQ(ret, PQCP_SUCCESS);
+    totalMallocCount = STUB_GetMallocCallCount();
+    ASSERT_TRUE(totalMallocCount > 0);
+
+    for (uint32_t i = 0; i < totalMallocCount; i++) {
+        signLen = sizeof(signData);
+        STUB_ResetMallocCount();
+        STUB_SetMallocFailIndex(i);
+        STUB_EnableMallocFail(true);
+        (void)CRYPT_EAL_PkeySign(ctx, CRYPT_MD_MAX, message->x, message->len, signData, &signLen);
+        STUB_EnableMallocFail(false);
+        BSL_ERR_ClearError();
+    }
+
+EXIT:
+    STUB_EnableMallocFail(false);
+    STUB_RESTORE(BSL_SAL_Malloc);
+    BSL_ERR_ClearError();
+    CRYPT_EAL_PkeyFreeCtx(ctx);
+    TestRandDeInit();
+    return;
+#else
+    SKIP_TEST();
+    (void)algId;
+    (void)message;
+#endif
+}
+/* END_CASE */
+
+/* @
+* @test  SDV_CRYPTO_PQCP_COMPOSITE_VERIFY_MALLOC_STUB_TC001
+* @spec  -
+* @title  PQCP Composite Sign Verify Malloc Failure Test
+* @precon  nan
+* @brief  1. Create sign and verify contexts, generate key pair, and sign a message
+*         2. Verify once with malloc stub disabled to count allocations
+*         3. Inject malloc failure at each selected allocation point and verify again
+* @expect  Verify handles malloc failure without crash or memory leak
+* @prior  nan
+* @auto  FALSE
+@ */
+/* BEGIN_CASE */
+void SDV_CRYPTO_PQCP_COMPOSITE_VERIFY_MALLOC_STUB_TC001(int algId, Hex *message)
+{
+#ifdef PQCP_COMPOSITE_SIGN
+    SKIP_IF_NOT_X86();
+    SKIP_IF_AIGIS_COMPOSITE_DISABLED(algId);
+    TestRandInitEx(NULL);
+    TestMemInit();
+    CRYPT_EAL_PkeyCtx *ctx = NULL;
+    CRYPT_EAL_PkeyCtx *verifyCtx = NULL;
+    uint8_t pubKeyData[TEST_COMPOSITE_BUFFER_SIZE] = {0};
+    uint8_t signData[TEST_COMPOSITE_BUFFER_SIZE] = {0};
+    uint32_t signLen = sizeof(signData);
+    uint32_t totalMallocCount = 0;
+
+    ctx = NewCompositeSignCtx(algId);
+    ASSERT_TRUE(ctx != NULL);
+    verifyCtx = NewCompositeSignCtx(algId);
+    ASSERT_TRUE(verifyCtx != NULL);
+
+    int32_t ret = CRYPT_EAL_PkeyGen(ctx);
+    ASSERT_EQ(ret, PQCP_SUCCESS);
+
+    BSL_Param pubParams[2] = {
+        {PQCP_PARAM_COMPOSITE_PUBKEY, BSL_PARAM_TYPE_OCTETS, pubKeyData, sizeof(pubKeyData), 0},
+        BSL_PARAM_END
+    };
+    ret = CRYPT_EAL_PkeyGetPubEx(ctx, pubParams);
+    ASSERT_EQ(ret, PQCP_SUCCESS);
+    pubParams[0].valueLen = pubParams[0].useLen;
+    ret = CRYPT_EAL_PkeySetPubEx(verifyCtx, pubParams);
+    ASSERT_EQ(ret, PQCP_SUCCESS);
+
+    ret = CRYPT_EAL_PkeySign(ctx, CRYPT_MD_MAX, message->x, message->len, signData, &signLen);
+    ASSERT_EQ(ret, PQCP_SUCCESS);
+
+    STUB_REPLACE(BSL_SAL_Malloc, STUB_BSL_SAL_Malloc);
+    STUB_EnableMallocFail(false);
+    STUB_ResetMallocCount();
+
+    ret = CRYPT_EAL_PkeyVerify(verifyCtx, CRYPT_MD_MAX, message->x, message->len, signData, signLen);
+    ASSERT_EQ(ret, PQCP_SUCCESS);
+    totalMallocCount = STUB_GetMallocCallCount();
+    ASSERT_TRUE(totalMallocCount > 0);
+
+    for (uint32_t i = 0; i < totalMallocCount; i++) {
+        STUB_ResetMallocCount();
+        STUB_SetMallocFailIndex(i);
+        STUB_EnableMallocFail(true);
+        (void)CRYPT_EAL_PkeyVerify(verifyCtx, CRYPT_MD_MAX, message->x, message->len, signData, signLen);
+        STUB_EnableMallocFail(false);
+        BSL_ERR_ClearError();
+    }
+
+EXIT:
+    STUB_EnableMallocFail(false);
+    STUB_RESTORE(BSL_SAL_Malloc);
+    BSL_ERR_ClearError();
+    CRYPT_EAL_PkeyFreeCtx(ctx);
+    CRYPT_EAL_PkeyFreeCtx(verifyCtx);
+    TestRandDeInit();
+    return;
+#else
+    SKIP_TEST();
+    (void)algId;
+    (void)message;
+#endif
+}
+/* END_CASE */
+
+/* @
+* @test  SDV_CRYPTO_PQCP_COMPOSITE_NULL_CTX_API_TC001
+* @spec  -
+* @title  PQCP Composite Sign NULL Context Error Handling Test
+* @precon  nan
+* @brief  1. Call APIs with NULL context
+*         2. Verify proper error codes are returned
+* @expect  All operations return PQCP_NULL_INPUT
+* @prior  nan
+* @auto  FALSE
+@ */
+/* BEGIN_CASE */
+void SDV_CRYPTO_PQCP_COMPOSITE_NULL_CTX_API_TC001(void)
+{
+#ifdef PQCP_COMPOSITE_SIGN
+    TestRandInitEx(NULL);
+    TestMemInit();
+
+    int32_t ret = CRYPT_EAL_PkeyGen(NULL);
+    ASSERT_EQ(ret, CRYPT_NULL_INPUT);
+
+    ret = CRYPT_EAL_PkeyCtrl(NULL, CRYPT_CTRL_SET_PARA_BY_ID, NULL, 0);
+    ASSERT_EQ(ret, CRYPT_NULL_INPUT);
+
+    uint8_t buf[32] = {0};
+    BSL_Param param[2] = {
+        {PQCP_PARAM_COMPOSITE_PRVKEY, BSL_PARAM_TYPE_OCTETS, buf, sizeof(buf), 0},
+        BSL_PARAM_END
+    };
+    ret = CRYPT_EAL_PkeyGetPrvEx(NULL, param);
+    ASSERT_EQ(ret, CRYPT_NULL_INPUT);
+
+    ret = CRYPT_EAL_PkeyGetPubEx(NULL, param);
+    ASSERT_EQ(ret, CRYPT_NULL_INPUT);
+
+    ret = CRYPT_EAL_PkeySetPrvEx(NULL, param);
+    ASSERT_EQ(ret, CRYPT_NULL_INPUT);
+
+    ret = CRYPT_EAL_PkeySetPubEx(NULL, param);
+    ASSERT_EQ(ret, CRYPT_NULL_INPUT);
+
+    uint32_t signLen = sizeof(buf);
+    ret = CRYPT_EAL_PkeySign(NULL, CRYPT_MD_MAX, buf, sizeof(buf), buf, &signLen);
+    ASSERT_EQ(ret, CRYPT_NULL_INPUT);
+
+    ret = CRYPT_EAL_PkeyVerify(NULL, CRYPT_MD_MAX, buf, sizeof(buf), buf, signLen);
+    ASSERT_EQ(ret, CRYPT_NULL_INPUT);
+
+EXIT:
+    TestRandDeInit();
+    return;
+#else 
+    SKIP_TEST();
+#endif
+}
+/* END_CASE */
+
+/* @
+* @test  SDV_CRYPTO_PQCP_COMPOSITE_ALG_NOT_SET_API_TC001
+* @spec  -
+* @title  PQCP Composite Sign Algorithm Not Set Error Handling Test
+* @precon  nan
+* @brief  1. Create context without setting algorithm
+*         2. Try to generate key
+*         3. Verify proper error code is returned
+* @expect  KeyGen returns PQCP_COMPOSITE_KEYINFO_NOT_SET
+* @prior  nan
+* @auto  FALSE
+@ */
+/* BEGIN_CASE */
+void SDV_CRYPTO_PQCP_COMPOSITE_ALG_NOT_SET_API_TC001(void)
+{
+#ifdef PQCP_COMPOSITE_SIGN
+    TestRandInitEx(NULL);
+    TestMemInit();
+    CRYPT_EAL_PkeyCtx *ctx = NULL;
+
+    ctx = CRYPT_EAL_ProviderPkeyNewCtx(NULL, PQCP_PKEY_COMPOSITE_SIGN, CRYPT_EAL_PKEY_SIGN_OPERATE, "provider=pqcp");
+    ASSERT_TRUE(ctx != NULL);
+
+    int32_t ret = CRYPT_EAL_PkeyGen(ctx);
+    ASSERT_EQ(ret, PQCP_COMPOSITE_KEYINFO_NOT_SET);
+
+EXIT:
+    CRYPT_EAL_PkeyFreeCtx(ctx);
+    TestRandDeInit();
+    return;
+#else 
+    SKIP_TEST();
+#endif
+}
+/* END_CASE */
+
+/* @
+* @test  SDV_CRYPTO_PQCP_COMPOSITE_INVALID_PARAMS_API_TC001
+* @spec  -
+* @title  PQCP Composite Sign Invalid Parameters Error Handling Test
+* @precon  nan
+* @brief  1. Create context and set algorithm
+*         2. Call APIs with invalid parameters
+*         3. Verify proper error codes are returned
+* @expect  Operations return expected error codes
+* @prior  nan
+* @auto  FALSE
+@ */
+/* BEGIN_CASE */
+void SDV_CRYPTO_PQCP_COMPOSITE_INVALID_PARAMS_API_TC001(int algId)
+{
+#ifdef PQCP_COMPOSITE_SIGN
+    SKIP_IF_AIGIS_COMPOSITE_DISABLED(algId);
+    TestRandInitEx(NULL);
+    TestMemInit();
+    CRYPT_EAL_PkeyCtx *ctx = NULL;
+    CRYPT_EAL_PkeyCtx *ctx2 = NULL;
+    ctx = CRYPT_EAL_ProviderPkeyNewCtx(NULL, PQCP_PKEY_COMPOSITE_SIGN, CRYPT_EAL_PKEY_SIGN_OPERATE, "provider=pqcp");
+    ASSERT_TRUE(ctx != NULL);
+
+    int32_t ret = CRYPT_EAL_PkeyCtrl(ctx, CRYPT_CTRL_SET_PARA_BY_ID, &algId, sizeof(algId));
+    ASSERT_EQ(ret, PQCP_SUCCESS);
+
+    ret = CRYPT_EAL_PkeyGetPubEx(ctx, NULL);
+    ASSERT_EQ(ret, CRYPT_NULL_INPUT);
+
+    BSL_Param pubNullData[2] = {
+        {PQCP_PARAM_COMPOSITE_PUBKEY, BSL_PARAM_TYPE_OCTETS, NULL, 100, 0},
+        BSL_PARAM_END
+    };
+    ret = CRYPT_EAL_PkeyGetPubEx(ctx, pubNullData);
+    ASSERT_EQ(ret, PQCP_NULL_INPUT);
+
+    ret = CRYPT_EAL_PkeyGetPrvEx(ctx, NULL);
+    ASSERT_EQ(ret, CRYPT_NULL_INPUT);
+
+    int32_t invalidAlgId = 99999;
+    ctx2 = CRYPT_EAL_ProviderPkeyNewCtx(NULL, PQCP_PKEY_COMPOSITE_SIGN, CRYPT_EAL_PKEY_SIGN_OPERATE, "provider=pqcp");
+    ASSERT_TRUE(ctx2 != NULL);
+    ret = CRYPT_EAL_PkeyCtrl(ctx2, CRYPT_CTRL_SET_PARA_BY_ID, &invalidAlgId, sizeof(invalidAlgId));
+    ASSERT_EQ(ret, PQCP_INVALID_ARG);
+
+EXIT:
+    CRYPT_EAL_PkeyFreeCtx(ctx);
+    CRYPT_EAL_PkeyFreeCtx(ctx2);
+    TestRandDeInit();
+    return;
+#else
+    SKIP_TEST();
+    (void)algId;
+#endif
+}
+/* END_CASE */
+
+/* @
+* @test  SDV_CRYPTO_PQCP_COMPOSITE_BUFFER_TOO_SMALL_API_TC001
+* @spec  -
+* @title  PQCP Composite Sign Buffer Too Small Error Handling Test
+* @precon  nan
+* @brief  1. Create context and generate key pair
+*         2. Try to get public key with too small buffer
+*         3. Verify proper error code is returned
+* @expect  GetPubEx returns PQCP_COMPOSITE_LEN_NOT_ENOUGH
+* @prior  nan
+* @auto  FALSE
+@ */
+/* BEGIN_CASE */
+void SDV_CRYPTO_PQCP_COMPOSITE_BUFFER_TOO_SMALL_API_TC001(int algId)
+{
+#ifdef PQCP_COMPOSITE_SIGN
+    SKIP_IF_AIGIS_COMPOSITE_DISABLED(algId);
+    TestRandInitEx(NULL);
+    TestMemInit();
+    CRYPT_EAL_PkeyCtx *ctx = NULL;
+    uint8_t pubKeyData[4] = {0};
+
+    ctx = CRYPT_EAL_ProviderPkeyNewCtx(NULL, PQCP_PKEY_COMPOSITE_SIGN, CRYPT_EAL_PKEY_SIGN_OPERATE, "provider=pqcp");
+    ASSERT_TRUE(ctx != NULL);
+
+    int32_t ret = CRYPT_EAL_PkeyCtrl(ctx, CRYPT_CTRL_SET_PARA_BY_ID, &algId, sizeof(algId));
+    ASSERT_EQ(ret, PQCP_SUCCESS);
+
+    ret = CRYPT_EAL_PkeyGen(ctx);
+    ASSERT_EQ(ret, PQCP_SUCCESS);
+
+    BSL_Param pubParams[2] = {
+        {PQCP_PARAM_COMPOSITE_PUBKEY, BSL_PARAM_TYPE_OCTETS, pubKeyData, sizeof(pubKeyData), 0},
+        BSL_PARAM_END
+    };
+    ret = CRYPT_EAL_PkeyGetPubEx(ctx, pubParams);
+    ASSERT_EQ(ret, PQCP_COMPOSITE_LEN_NOT_ENOUGH);
+
+EXIT:
+    CRYPT_EAL_PkeyFreeCtx(ctx);
+    TestRandDeInit();
+    return;
+#else 
+    SKIP_TEST();
+    (void)algId;
+#endif
+}
+/* END_CASE */
+
+/* @
+* @test  SDV_CRYPTO_PQCP_COMPOSITE_GET_SIGNLEN_API_TC001
+* @spec  -
+* @title  PQCP Composite Sign Get Signature Length API Test
+* @precon  nan
+* @brief  1. Create context and generate key pair
+*         2. Get signature length
+*         3. Verify length is valid
+* @expect  All operations return PQCP_SUCCESS and signLen > 0
+* @prior  nan
+* @auto  FALSE
+@ */
+/* BEGIN_CASE */
+void SDV_CRYPTO_PQCP_COMPOSITE_GET_SIGNLEN_API_TC001(int algId, int expMaxPqcSignLen)
+{
+#ifdef PQCP_COMPOSITE_SIGN
+    SKIP_IF_AIGIS_COMPOSITE_DISABLED(algId);
+    TestRandInitEx(NULL);
+    TestMemInit();
+    CRYPT_EAL_PkeyCtx *ctx = NULL;
+    uint32_t maxSignLen = 0;
+    uint32_t signLen = 0;
+    uint32_t tradSignLen = 0;
+    uint8_t signData[TEST_COMPOSITE_BUFFER_SIZE] = {0};
+    const uint8_t message[] = "Test message for composite signature length";
+    ctx = CRYPT_EAL_ProviderPkeyNewCtx(NULL, PQCP_PKEY_COMPOSITE_SIGN, CRYPT_EAL_PKEY_SIGN_OPERATE, "provider=pqcp");
+    ASSERT_TRUE(ctx != NULL);
+
+    int32_t ret = CRYPT_EAL_PkeyCtrl(ctx, CRYPT_CTRL_SET_PARA_BY_ID, &algId, sizeof(algId));
+    ASSERT_EQ(ret, PQCP_SUCCESS);
+
+    ret = CRYPT_EAL_PkeyGen(ctx);
+    ASSERT_EQ(ret, PQCP_SUCCESS);
+
+    ret = CRYPT_EAL_PkeyCtrl(ctx, CRYPT_CTRL_GET_SIGNLEN, &maxSignLen, sizeof(maxSignLen));
+    ASSERT_EQ(ret, PQCP_SUCCESS);
+    ASSERT_EQ(CRYPT_EAL_PkeyCtrl(ctx, PQCP_CTRL_HYBRID_GET_TRAD_SIGNLEN, &tradSignLen, sizeof(tradSignLen)),
+              PQCP_SUCCESS);
+    ASSERT_TRUE(tradSignLen >= 72);
+    ASSERT_EQ(maxSignLen, tradSignLen + (uint32_t)expMaxPqcSignLen);
+
+    signLen = sizeof(signData);
+    ret = CRYPT_EAL_PkeySign(ctx, CRYPT_MD_MAX, message, sizeof(message), signData, &signLen);
+    ASSERT_EQ(ret, PQCP_SUCCESS);
+    ASSERT_TRUE(signLen <= maxSignLen);
+
+    uint32_t pqcSignLen = 0;
+    ret = CRYPT_EAL_PkeyCtrl(ctx, PQCP_CTRL_HYBRID_GET_PQC_SIGNLEN, &pqcSignLen, sizeof(pqcSignLen));
+    ASSERT_EQ(ret, PQCP_SUCCESS);
+    ASSERT_EQ(pqcSignLen, (uint32_t)expMaxPqcSignLen);
+    ASSERT_TRUE(signLen > pqcSignLen);
+    ASSERT_TRUE(signLen - pqcSignLen <= tradSignLen);
+    ASSERT_TRUE(signData[pqcSignLen] == 0x30);
+EXIT:
+    CRYPT_EAL_PkeyFreeCtx(ctx);
+    TestRandDeInit();
+    return;
+#else 
+    SKIP_TEST();
+    (void)algId;
+    (void)expMaxPqcSignLen;
+#endif
+}
+/* END_CASE */
+
+/* @
+* @test  SDV_CRYPTO_PQCP_COMPOSITE_DUP_CTX_API_TC001
+* @spec  -
+* @title  PQCP Composite Sign Context Duplication Test
+* @precon  nan
+* @brief  1. Create context and generate key pair
+*         2. Duplicate context
+*         3. Verify duplicated context works correctly
+* @expect  Duplicated context works as expected
+* @prior  nan
+* @auto  FALSE
+@ */
+/* BEGIN_CASE */
+void SDV_CRYPTO_PQCP_COMPOSITE_DUP_CTX_API_TC001(int algId)
+{
+#ifdef PQCP_COMPOSITE_SIGN
+    SKIP_IF_AIGIS_COMPOSITE_DISABLED(algId);
+    TestRandInitEx(NULL);
+    TestMemInit();
+    CRYPT_EAL_PkeyCtx *ctx = NULL;
+    CRYPT_EAL_PkeyCtx *dupCtx = NULL;
+    uint8_t signData[TEST_COMPOSITE_BUFFER_SIZE] = {0};
+    uint32_t signLen = sizeof(signData);
+    const uint8_t message[] = "Test message for composite signature";
+
+    ctx = CRYPT_EAL_ProviderPkeyNewCtx(NULL, PQCP_PKEY_COMPOSITE_SIGN, CRYPT_EAL_PKEY_SIGN_OPERATE, "provider=pqcp");
+    ASSERT_TRUE(ctx != NULL);
+
+    int32_t ret = CRYPT_EAL_PkeyCtrl(ctx, CRYPT_CTRL_SET_PARA_BY_ID, &algId, sizeof(algId));
+    ASSERT_EQ(ret, PQCP_SUCCESS);
+
+    ret = CRYPT_EAL_PkeyGen(ctx);
+    ASSERT_EQ(ret, PQCP_SUCCESS);
+
+    dupCtx = CRYPT_EAL_PkeyDupCtx(ctx);
+    ASSERT_TRUE(dupCtx != NULL);
+
+    ret = CRYPT_EAL_PkeySign(ctx, CRYPT_MD_MAX, message, sizeof(message), signData, &signLen);
+    ASSERT_EQ(ret, PQCP_SUCCESS);
+
+    ret = CRYPT_EAL_PkeyVerify(dupCtx, CRYPT_MD_MAX, message, sizeof(message), signData, signLen);
+    ASSERT_EQ(ret, PQCP_SUCCESS);
+
+    signLen = sizeof(signData);
+    ret = CRYPT_EAL_PkeySign(dupCtx, CRYPT_MD_MAX, message, sizeof(message), signData, &signLen);
+    ASSERT_EQ(ret, PQCP_SUCCESS);
+
+EXIT:
+    CRYPT_EAL_PkeyFreeCtx(ctx);
+    CRYPT_EAL_PkeyFreeCtx(dupCtx);
+    TestRandDeInit();
+    return;
+#else 
+    SKIP_TEST();
+    (void)algId;
+#endif
+}
+/* END_CASE */
+
+/* @
+* @test  SDV_CRYPTO_PQCP_COMPOSITE_GET_SEPARATE_KEYLEN_API_TC001
+* @spec  -
+* @title  PQCP Composite Sign Get Separate Key Length API Test
+* @precon  nan
+* @brief  1. Create context and generate key pair
+*         2. Get PQC and TRAD key lengths separately
+*         3. Verify lengths are consistent
+* @expect  All operations return PQCP_SUCCESS and lengths are valid
+* @prior  nan
+* @auto  FALSE
+@ */
+/* BEGIN_CASE */
+void SDV_CRYPTO_PQCP_COMPOSITE_GET_SEPARATE_KEYLEN_API_TC001(int algId)
+{
+#ifdef PQCP_COMPOSITE_SIGN
+    SKIP_IF_AIGIS_COMPOSITE_DISABLED(algId);
+    TestRandInitEx(NULL);
+    TestMemInit();
+    CRYPT_EAL_PkeyCtx *ctx = NULL;
+    uint32_t pqcPrvKeyLen = 0;
+    uint32_t tradPrvKeyLen = 0;
+    uint32_t pqcPubKeyLen = 0;
+    uint32_t tradPubKeyLen = 0;
+    uint32_t totalPrvKeyLen = 0;
+    uint32_t totalPubKeyLen = 0;
+
+    ctx = CRYPT_EAL_ProviderPkeyNewCtx(NULL, PQCP_PKEY_COMPOSITE_SIGN, CRYPT_EAL_PKEY_SIGN_OPERATE, "provider=pqcp");
+    ASSERT_TRUE(ctx != NULL);
+
+    int32_t ret = CRYPT_EAL_PkeyCtrl(ctx, CRYPT_CTRL_SET_PARA_BY_ID, &algId, sizeof(algId));
+    ASSERT_EQ(ret, PQCP_SUCCESS);
+
+    ret = CRYPT_EAL_PkeyGen(ctx);
+    ASSERT_EQ(ret, PQCP_SUCCESS);
+
+    ret = CRYPT_EAL_PkeyCtrl(ctx, PQCP_CTRL_HYBRID_GET_PQC_PRVKEY_LEN, &pqcPrvKeyLen, sizeof(pqcPrvKeyLen));
+    ASSERT_EQ(ret, PQCP_SUCCESS);
+    ASSERT_TRUE(pqcPrvKeyLen > 0);
+
+    ret = CRYPT_EAL_PkeyCtrl(ctx, PQCP_CTRL_HYBRID_GET_TRAD_PRVKEY_LEN, &tradPrvKeyLen, sizeof(tradPrvKeyLen));
+    ASSERT_EQ(ret, PQCP_SUCCESS);
+    ASSERT_EQ(tradPrvKeyLen, 32);
+
+    ret = CRYPT_EAL_PkeyCtrl(ctx, CRYPT_CTRL_GET_PRVKEY_LEN, &totalPrvKeyLen, sizeof(totalPrvKeyLen));
+    ASSERT_EQ(ret, PQCP_SUCCESS);
+    ASSERT_EQ(totalPrvKeyLen, pqcPrvKeyLen + tradPrvKeyLen);
+
+    ret = CRYPT_EAL_PkeyCtrl(ctx, PQCP_CTRL_HYBRID_GET_PQC_PUBKEY_LEN, &pqcPubKeyLen, sizeof(pqcPubKeyLen));
+    ASSERT_EQ(ret, PQCP_SUCCESS);
+    ASSERT_TRUE(pqcPubKeyLen > 0);
+
+    ret = CRYPT_EAL_PkeyCtrl(ctx, PQCP_CTRL_HYBRID_GET_TRAD_PUBKEY_LEN, &tradPubKeyLen, sizeof(tradPubKeyLen));
+    ASSERT_EQ(ret, PQCP_SUCCESS);
+    ASSERT_TRUE(tradPubKeyLen > 0);
+
+    ret = CRYPT_EAL_PkeyCtrl(ctx, CRYPT_CTRL_GET_PUBKEY_LEN, &totalPubKeyLen, sizeof(totalPubKeyLen));
+    ASSERT_EQ(ret, PQCP_SUCCESS);
+    ASSERT_EQ(totalPubKeyLen, pqcPubKeyLen + tradPubKeyLen);
+
+EXIT:
+    CRYPT_EAL_PkeyFreeCtx(ctx);
+    TestRandDeInit();
+    return;
+#else 
+    SKIP_TEST();
+    (void)algId;
+#endif
+}
+/* END_CASE */
+
+/* @
+* @test  SDV_CRYPTO_PQCP_COMPOSITE_GET_SEPARATE_SIGNLEN_API_TC001
+* @spec  -
+* @title  PQCP Composite Sign Get Separate Signature Length API Test
+* @precon  nan
+* @brief  1. Create context and generate key pair
+*         2. Get PQC and total signature lengths
+*         3. Verify lengths are valid
+* @expect  All operations return PQCP_SUCCESS and lengths are valid
+* @prior  nan
+* @auto  FALSE
+@ */
+/* BEGIN_CASE */
+void SDV_CRYPTO_PQCP_COMPOSITE_GET_SEPARATE_SIGNLEN_API_TC001(int algId, int expMaxPqcSignLen)
+{
+#ifdef PQCP_COMPOSITE_SIGN
+    SKIP_IF_AIGIS_COMPOSITE_DISABLED(algId);
+    TestRandInitEx(NULL);
+    TestMemInit();
+    CRYPT_EAL_PkeyCtx *ctx = NULL;
+    uint32_t totalSigLen = 0;
+    uint32_t tradSigLen = 0;
+    uint32_t signLen = 0;
+    uint8_t signData[TEST_COMPOSITE_BUFFER_SIZE] = {0};
+    const uint8_t message[] = "Test message for separate signature length";
+
+    ctx = CRYPT_EAL_ProviderPkeyNewCtx(NULL, PQCP_PKEY_COMPOSITE_SIGN, CRYPT_EAL_PKEY_SIGN_OPERATE, "provider=pqcp");
+    ASSERT_TRUE(ctx != NULL);
+
+    int32_t ret = CRYPT_EAL_PkeyCtrl(ctx, CRYPT_CTRL_SET_PARA_BY_ID, &algId, sizeof(algId));
+    ASSERT_EQ(ret, PQCP_SUCCESS);
+
+    ret = CRYPT_EAL_PkeyGen(ctx);
+    ASSERT_EQ(ret, PQCP_SUCCESS);
+
+    ret = CRYPT_EAL_PkeyCtrl(ctx, CRYPT_CTRL_GET_SIGNLEN, &totalSigLen, sizeof(totalSigLen));
+    ASSERT_EQ(ret, PQCP_SUCCESS);
+    ASSERT_EQ(CRYPT_EAL_PkeyCtrl(ctx, PQCP_CTRL_HYBRID_GET_TRAD_SIGNLEN, &tradSigLen, sizeof(tradSigLen)),
+              PQCP_SUCCESS);
+    ASSERT_TRUE(tradSigLen == 72);
+    ASSERT_EQ(totalSigLen, tradSigLen + (uint32_t)expMaxPqcSignLen);
+
+    signLen = sizeof(signData);
+    ret = CRYPT_EAL_PkeySign(ctx, CRYPT_MD_MAX, message, sizeof(message), signData, &signLen);
+    ASSERT_EQ(ret, PQCP_SUCCESS);
+    ASSERT_TRUE(signLen <= totalSigLen);
+
+    uint32_t pqcSignLen = 0;
+    ret = CRYPT_EAL_PkeyCtrl(ctx, PQCP_CTRL_HYBRID_GET_PQC_SIGNLEN, &pqcSignLen, sizeof(pqcSignLen));
+    ASSERT_EQ(ret, PQCP_SUCCESS);
+    ASSERT_EQ(pqcSignLen, (uint32_t)expMaxPqcSignLen);
+    ASSERT_TRUE(signLen > pqcSignLen);
+    ASSERT_TRUE(signLen - pqcSignLen <= tradSigLen);
+    ASSERT_TRUE(signData[pqcSignLen] == 0x30);
+
+EXIT:
+    CRYPT_EAL_PkeyFreeCtx(ctx);
+    TestRandDeInit();
+    return;
+#else 
+    SKIP_TEST();
+    (void)algId;
+    (void)expMaxPqcSignLen;
+#endif
+}
+/* END_CASE */

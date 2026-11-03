@@ -1,0 +1,34 @@
+/* TestEnclave.edl - Top EDL file. */
+
+enclave {
+    include "openssl/bn.h" 
+    from "sgx_tsgxssl.edl" import *;
+    from "sgx_pthread.edl" import *;
+    /* 
+     * uprint - invokes OCALL to display string buffer inside the enclave.
+     *  [in]: copy the string buffer to App outside.
+     *  [string]: specifies 'str' is a NULL terminated buffer.
+     */
+    untrusted {
+        void uprint([in, string] const char *str);
+        void usgx_exit(int reason);
+    };
+
+    trusted {
+        public void t_sgxssl_call_apis();
+        public int she_generateRandomKeysTee();
+        public int she_generateRandomKeysTee2();
+        public int she_encryptTeeString([user_check]char *str_c, [user_check]char *str_m);
+        //float 4,double 8,int 4
+        //估计是深层拷贝的原因，因为BIGNUM结构体里面还有指针，先用char*做吧,我指的是出来enclave
+        public void calEx([user_check]BIGNUM *output,[user_check]BIGNUM *input,int k,int kTimes);
+        public void calENegx([user_check]BIGNUM *output,[user_check]BIGNUM *input,int k,int kTimes);
+        public void calRelu([user_check]BIGNUM *output1,[user_check]BIGNUM *output2,[user_check]BIGNUM *input);
+        public void sigmoid_inverseX([user_check]BIGNUM *output,[user_check]BIGNUM *input,int k,int kTimes);
+        public void sheRescale([user_check]BIGNUM *output, [user_check]BIGNUM *input, int k, int kTimes);
+        public void sheRescaleNeg([user_check]BIGNUM *output, [user_check]BIGNUM *input, int k, int kTimes);
+        public void keySynthronize([user_check]BIGNUM *p, [user_check]BIGNUM *q, [user_check]BIGNUM *l, [user_check]BIGNUM *n, [user_check]BIGNUM *e_negative1, [user_check]BIGNUM *l_2, [user_check]BIGNUM *cipher_zero,[user_check]BIGNUM *cipher_one);
+        public void reluCipherMulTEE([user_check]BIGNUM *output, [user_check]BIGNUM *Eb, [user_check]BIGNUM *Em, int k, int EmTimes);
+        public void getFraction([user_check]BIGNUM *res1, [user_check]BIGNUM *res2, [user_check]BIGNUM *input1, [user_check]BIGNUM *input2, int k_times);
+    };
+};

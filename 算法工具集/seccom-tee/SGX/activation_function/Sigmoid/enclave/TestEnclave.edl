@@ -1,0 +1,30 @@
+/* TestEnclave.edl - Top EDL file. */
+
+enclave {
+    include "openssl/bn.h" 
+from "sgx_tsgxssl.edl" import *;
+from "sgx_pthread.edl" import *;
+    /* 
+     * uprint - invokes OCALL to display string buffer inside the enclave.
+     *  [in]: copy the string buffer to App outside.
+     *  [string]: specifies 'str' is a NULL terminated buffer.
+     */
+    untrusted {
+        void uprint([in, string] const char *str);
+        void usgx_exit(int reason);
+    };
+
+    //如果不是openssl底层的问题，那大概问题就在这里，就user_check，in,out这里，但暂时时间不够用，先跑通弄个截图测一下时间啥的。
+    //但我看了slalom那边的edl，全是user_check啊，唉。
+    trusted {
+        public void t_sgxssl_call_apis();
+        public int she_generateRandomKeysTee();
+        public int she_generateRandomKeysTee2();
+        //float 4,double 8,int 4
+        //估计是深层拷贝的原因，因为BIGNUM结构体里面还有指针，先用char*做吧,我指的是出来enclave
+        public void calENegx([user_check]BIGNUM *output,[user_check]BIGNUM *input,int k,int kTimes);
+        public void sigmoid_inverseX([user_check]BIGNUM *output,[user_check]BIGNUM *input,int k,int kTimes);
+        public void sheRescale([user_check]BIGNUM *output, [user_check]BIGNUM *input, int k, int kTimes);
+        public void keySynthronize([user_check]BIGNUM *p, [user_check]BIGNUM *q, [user_check]BIGNUM *l, [user_check]BIGNUM *n, [user_check]BIGNUM *e_negative1, [user_check]BIGNUM *l_2, [user_check]BIGNUM *cipher_zero);
+    };
+};

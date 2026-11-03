@@ -1,0 +1,8 @@
+gpd.ta.appID:   		da21c465-11dd-4c8d-862b-f0cbc4aff4df
+gpd.ta.service_name:		TA
+gpd.ta.singleInstance:		true
+gpd.ta.multiSession: 		false
+gpd.ta.instanceKeepAlive:	false
+gpd.ta.dataSize:	    67928064
+gpd.ta.stackSize:		40960
+gpd.ta.mem_page_align:          false

@@ -1,0 +1,24 @@
+/* TestEnclave.edl - Top EDL file. */
+
+enclave {
+    include "openssl/bn.h" 
+    from "sgx_tsgxssl.edl" import *;
+    from "sgx_pthread.edl" import *;
+
+    untrusted {
+        void uprint([in, string] const char *str);
+        void usgx_exit(int reason);
+    };
+
+    trusted {
+        public void t_sgxssl_call_apis();
+        public void initial(int networkInputs, int networkOutputs, [user_check]int *LayNum, int num);
+        public int she_generateRandomKeysTee2();
+        public void getSoftmax([user_check]char *res, int LayerSeqNum, int NodeSeqNum, [user_check]BIGNUM **input,double sumEx);
+        public void getSoftmaxSum([out]double *exSumAddr, int LayerSeqNum, [user_check]BIGNUM **input);
+        public void getFraction([user_check]char *res1, [user_check]char *res2, [in,size=24]BIGNUM *tmp1, [in,size=24]BIGNUM *tmp2);
+        public int she_encryptTeeString([user_check]char *str_c, [user_check]char *str_m);
+        public void calEx([user_check]char *outputString,[in,size=24]BIGNUM *input);
+        public void calNegx([user_check]char *outputString,int flag,[in,size=24]BIGNUM *input);
+    };
+};

@@ -1,0 +1,62 @@
+name: PQCP Build and Test
+permissions:
+  contents: read
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+env:
+  BUILD_TYPE: Release
+  OPENHITLS_DIR: platform/openhitls
+  OPENHITLS_REF: openhitls-0.4.0-alpha2
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 1
+
+    - name: Download OpenHiTLS
+      run: |
+        mkdir -p ${{ github.workspace }}/platform
+        git clone --depth 1 --branch "${{ env.OPENHITLS_REF }}" https://gitcode.com/openHiTLS/openhitls.git ${{ github.workspace }}/${{ env.OPENHITLS_DIR }}
+
+    - name: Build OpenHiTLS
+      run: |
+        mkdir -p ${{ github.workspace }}/${{ env.OPENHITLS_DIR }}/build
+        cd ${{ github.workspace }}/${{ env.OPENHITLS_DIR }}/build
+        cmake .. \
+          -DHITLS_BUILD_PROFILE=full \
+          -DHITLS_BUILD_STATIC=OFF \
+          -DHITLS_EAL_INIT_OPTS=9 \
+          -DHITLS_CRYPTO_ASM_CHECK=ON \
+          -DCMAKE_SHARED_LINKER_FLAGS="-ldl" \
+          -DHITLS_PLATFORM_BITS=64
+        make -j$(nproc)
+
+    - name: Configure CMake
+      run: |
+        mkdir -p ${{ github.workspace }}/build
+        cd ${{ github.workspace }}/build
+        cmake .. \
+          -DCMAKE_BUILD_TYPE="${{ env.BUILD_TYPE }}" \
+          -DENABLE_ASAN="OFF" \
+          -DHITLS_ROOT_PATH="${{ github.workspace }}/${{ env.OPENHITLS_DIR }}"
+
+    - name: Build
+      working-directory: ${{ github.workspace }}/build
+      run: make -j$(nproc)
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: pqcp-build
+        path: ${{ github.workspace }}/build
+        retention-days: 5

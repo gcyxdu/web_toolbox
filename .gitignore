@@ -9,3 +9,5 @@ runtime-logs/
 
 # 推送时临时挪开的嵌套仓库目录
 .git.hold
+
+.runtime/

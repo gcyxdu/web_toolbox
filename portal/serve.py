@@ -4,6 +4,13 @@ from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, unquote, urlparse
 import json
+import shutil
+import importlib.util
+import socket
+import urllib.request
+import sys
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]/"adapters"))
+import experiments
 
 PORT = 8090
 HOST = "127.0.0.1"
@@ -88,6 +95,12 @@ class Handler(SimpleHTTPRequestHandler):
 
     def do_GET(self):
         parsed = urlparse(self.path)
+        if parsed.path == "/api/experiments":
+            self._json(200, experiments.RESULTS)
+            return
+        if parsed.path == "/api/status":
+            self._status()
+            return
         if parsed.path == "/api/list":
             self._list(parsed)
             return
@@ -95,6 +108,36 @@ class Handler(SimpleHTTPRequestHandler):
             self._file(parsed)
             return
         return super().do_GET()
+
+    def do_POST(self):
+        if self.path.startswith('/api/run/'):
+            key=self.path.removeprefix('/api/run/')
+            ok,message=experiments.start(key)
+            self._json(202 if ok else 409, {'ok':ok,'message':message})
+            return
+        self._json(404, {'message':'接口不存在'})
+
+    def _status(self):
+        def has_module(name):
+            try:
+                return importlib.util.find_spec(name) is not None
+            except (ImportError, ValueError):
+                return False
+        try:
+            with urllib.request.urlopen('http://127.0.0.1:8000/api/health', timeout=1) as response:
+                health=json.load(response)
+            visualfl=health.get('service')=='VisualFL' and health.get('status')=='ok'
+        except (OSError,ValueError):
+            visualfl=False
+        rmt = MODULES_ROOT / "seccom-tee" / "SGX" / "RMT_V"
+        self._json(200, {"visualfl_listening": visualfl, "visualfl_environment": (experiments.RUNTIME/"visualfl-env/Scripts/python.exe").exists(),
+            "visualfl_dependencies": {x: has_module(x) for x in ("fastapi", "uvicorn", "torch")},
+            "sgboost_java": experiments.JAVA is not None,
+            "sgboost_jar": (MODULES_ROOT / "SGBoost-main" / "SGBoost.jar").exists(),
+            "kangaroo_build_tools": {x: bool(shutil.which(x)) for x in ("cmake", "make", "g++")},
+            "kangaroo_executable": (experiments.RUNTIME/"kangaroo/examples.exe").exists(),
+            "rmt_v_source": rmt.is_dir(), "rmt_v_app": (rmt / "App").is_dir(),
+            "platform": __import__("sys").platform})
 
     def _qs(self, parsed):
         q = parse_qs(parsed.query)

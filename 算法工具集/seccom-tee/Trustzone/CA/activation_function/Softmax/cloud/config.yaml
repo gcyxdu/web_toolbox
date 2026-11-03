@@ -1,0 +1,5 @@
+ta_path: /data/da21c465-11dd-4c8d-862b-f0cbc4aff4df.sec
+input_dir: /root/heqi/sgxtoTz/TzCode/test/CA/activate_function/Softmax/data/
+combined_str_len: 60000
+cycle_num: 10000
+k: 1000000

@@ -23,7 +23,7 @@ def run_sgboost():
    time.sleep(1)
   accuracy=re.findall(r'Accuracy:\s*([0-9.]+)',data);duration=re.findall(r'(\d+)ms',data)
   if not accuracy or not duration:raise RuntimeError('未在时限内取得完整训练指标；进程已清理，详见日志')
-  return {'mode':'SGBoost 原始 JAR（仅适配数据路径）','accuracy':round(float(accuracy[-1])*100,2),'accuracy_history':[round(float(x)*100,2) for x in accuracy],'duration_ms':int(duration[-1]),'wall_ms':round((time.perf_counter()-started)*1000),'correctness':None,'note':'准确率与训练时间来自 Organizer 日志，正确性未独立验证；训练结束后清理等待发布的进程。'}
+  return {'iterations':len(accuracy),'mode':'SGBoost 原始 JAR（仅适配数据路径）','accuracy':round(float(accuracy[-1])*100,2),'accuracy_history':[round(float(x)*100,2) for x in accuracy],'duration_ms':int(duration[-1]),'wall_ms':round((time.perf_counter()-started)*1000),'correctness':None,'note':'准确率与训练时间来自 Organizer 日志，正确性未独立验证；训练结束后清理等待发布的进程。'}
  finally:
   for cls,p,log in procs:
    if p.poll() is None:p.terminate()
@@ -37,19 +37,42 @@ def run_kangaroo():
  if p.returncode:raise RuntimeError('Kangaroo 退出码 '+str(p.returncode)+': '+output[-1200:])
  plain=re.search(r'True prediction results:\s*([-\d.]+)',output);cipher=re.search(r'Ciphertext prediction result:\s*([-\d.]+)',output)
  if not plain or not cipher:raise RuntimeError('未取得明文与密文输出')
- return {'mode':'Kangaroo Windows 适配 · Iris 单次交互式密文推理','accuracy':None,'correctness':plain.group(1)==cipher.group(1),'plaintext_result':plain.group(1),'ciphertext_result':cipher.group(1),'duration_ms':round((time.perf_counter()-started)*1000,3),'note':'明密文一致性不是分类准确率；耗时为进程端到端墙钟时间，包含密钥与模型初始化。'}
+ result={'mode':'Kangaroo Windows 适配 · Iris 单次交互式密文推理','accuracy':None,'correctness':plain.group(1)==cipher.group(1),'plaintext_result':plain.group(1),'ciphertext_result':cipher.group(1),'duration_ms':round((time.perf_counter()-started)*1000,3),'note':'明密文一致性不是分类准确率；耗时为进程端到端墙钟时间，包含密钥与模型初始化。'}
+ result['absolute_error']=abs(float(plain.group(1))-float(cipher.group(1)))
+ baseline=re.search(r'Plaintext Running Time:\s*([\d.]+)ms',output)
+ nodes=re.search(r'Total number of nodes\s+(\d+)\s+Number of virtual nodes\s+(\d+)',output)
+ result['plaintext_ms']=float(baseline.group(1)) if baseline else None
+ if nodes:result.update(expanded_nodes=int(nodes.group(1)),virtual_nodes=int(nodes.group(2)))
+ result['reference_path']=[{'node':int(n),'input':int(x),'threshold':int(y)} for n,x,y in re.findall(r'^(\d+) x:\s*(-?\d+) y:\s*(-?\d+)',output,re.M)]
+ return result
+
+def visualfl_request(path,body=None):
+ req=urllib.request.Request('http://127.0.0.1:8000'+path,data=json.dumps(body).encode('utf-8') if body is not None else None,headers={'Content-Type':'application/json'})
+ with urllib.request.urlopen(req,timeout=15) as r:return json.load(r)
+
+def visualfl_result(job):
+ """Extract actual data-preparation and round events; no simulated client metrics."""
+ rid=job['id'];m=job['metrics'];config=job['config']
+ events=visualfl_request('/api/runs/'+rid+'/events')
+ data=next((e['payload'] for e in events if e['type']=='data_prepared'),{})
+ rounds=[e['payload'] for e in events if e['type']=='round_completed']
+ return {'mode':'VisualFL / '+config['algorithm']+' / '+config['dataset']+' / PyTorch CPU',
+  'accuracy':round(m['accuracy']*100,2),'duration_ms':round(m['duration_ms'],3),
+  'loss_final':m.get('loss'),'correctness':None,'run_id':rid,'rounds':m.get('round'),
+  'client_count':config['client_count'],'clients':data.get('clients',[]),
+  'train_samples':data.get('train_samples'),'test_samples':data.get('test_samples'),
+  'algorithm':config['algorithm'],'model':config['model'],'attack':config['attack'],
+  'round_history':rounds,'accuracy_history':[round(r['accuracy']*100,4) for r in rounds],
+  'loss':[r['loss'] for r in rounds],
+  'round_compute_total_ms':round(sum(r['duration_ms'] for r in rounds),3) if rounds else None,
+  'note':'准确率与损失来自全局测试集；duration_ms 是末轮训练与评估耗时，round_compute_total_ms 为各轮计算耗时之和，均不含服务启动与数据准备。客户端样本数来自 data_prepared 实测事件；攻击配置见 attack 字段，不表示接入了隐私协议。'}
 
 def run_visualfl():
- def request(path,body=None):
-  req=urllib.request.Request('http://127.0.0.1:8000'+path, data=json.dumps(body).encode('utf-8') if body is not None else None, headers={'Content-Type':'application/json'})
-  with urllib.request.urlopen(req,timeout=15) as r:return json.load(r)
  config={'name':'平台演示-Iris','dataset':'Iris','model':'lr','client_count':3,'rounds':5,'local_steps':10,'distribution':'iid','learning_rate':.1,'attack':'None','defense':'Mean'}
- job=request('/api/runs',config);rid=job['id'];deadline=time.monotonic()+180
+ job=visualfl_request('/api/runs',config);rid=job['id'];deadline=time.monotonic()+180
  while time.monotonic()<deadline:
-  job=request('/api/runs/'+rid)
-  if job['status']=='completed':
-   m=job['metrics']
-   return {'mode':'VisualFL / FedAvg / Iris / PyTorch CPU','accuracy':round(m['accuracy']*100,2),'duration_ms':round(m['duration_ms'],3),'loss_final':m.get('loss'),'correctness':None,'run_id':rid,'rounds':m.get('round'),'note':'真实联邦训练，无攻击、Mean 聚合、3 个客户端、5 轮；准确率来自 VisualFL 测试集，不是隐私安全或可验证计算证明。'}
+  job=visualfl_request('/api/runs/'+rid)
+  if job['status']=='completed':return visualfl_result(job)
   if job['status'] in ('failed','cancelled','interrupted'):raise RuntimeError(job.get('error') or job['status'])
   time.sleep(1)
  raise RuntimeError('VisualFL 训练超时，任务可能仍在运行，请在 VisualFL 查看：'+rid)

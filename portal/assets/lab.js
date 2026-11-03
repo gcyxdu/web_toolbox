@@ -3,7 +3,7 @@ let activeProject = 'sgboost';
 let activeView = 'overview';
 let experimentData = {};
 let lastMetricKey = '';
-let lastProtocolProject = '';
+let lastProtocolKey = '';
 let requestPending = false;
 let localRunError = '';
 let experimentReadError = false;
@@ -39,7 +39,7 @@ function applyRoute() {
   document.getElementById('detail-title').textContent = data.title;
   document.getElementById('detail-desc').textContent = data.description;
   document.getElementById('run-experiment').textContent = data.run;
-  document.getElementById('project-config').textContent = replayInfo[activeProject].inputs;
+  document.getElementById('project-config').textContent = demoDefinitions[activeProject].inputs;
   document.getElementById('detail-help').textContent = data.help;
   document.getElementById('detail-link').classList.toggle('hidden', activeProject !== 'visualfl');
   document.querySelectorAll('.nav-project').forEach(group => {
@@ -72,17 +72,8 @@ async function checkStatus() {
 }
 function renderMetrics(result) {
   const key = activeProject + JSON.stringify(result); if (key === lastMetricKey) return; lastMetricKey = key;
-  const box = document.getElementById('detail-metrics'), chart = document.getElementById('detail-chart'); box.replaceChildren(); chart.replaceChildren();
-  if (!result) return;
-  const items = [['准确率', result.accuracy != null ? result.accuracy + '%' : '不适用'], ['正确性', result.correctness === true ? '输出一致' : result.correctness === false ? '输出不同' : '未独立验证'], ['耗时', result.duration_ms != null ? result.duration_ms + ' ms' : '—']];
-  items.forEach(([label,value]) => {const el = document.createElement('div'); el.className = 'metric-box'; appendText(el, 'span', label); appendText(el, 'strong', value); box.append(el)});
-  const values = result.loss || result.accuracy_history;
-  if (values && values.length > 1) {
-    appendText(chart, 'h3', result.loss ? '训练损失（采样记录）' : '迭代准确率（%）');
-    const max = Math.max(...values), min = Math.min(...values);
-    const ns = 'http://www.w3.org/2000/svg', svg = document.createElementNS(ns, 'svg'); svg.setAttribute('viewBox', '0 0 500 120'); svg.classList.add('result-chart'); svg.setAttribute('role','img'); svg.setAttribute('aria-label', result.loss ? '训练损失曲线' : '迭代准确率曲线');
-    const line = document.createElementNS(ns, 'polyline'); line.setAttribute('points', values.map((v,i) => `${15 + i*470/(values.length-1)},${100 - (v-min)*80/(max-min || 1)}`).join(' ')); line.setAttribute('fill','none'); line.setAttribute('stroke','#679578'); line.setAttribute('stroke-width','2'); svg.append(line); chart.append(svg);
-  }
+  createMetricCards(document.getElementById('detail-metrics'),projectMetrics(activeProject,result));
+  renderProjectEvidence(document.getElementById('detail-chart'),activeProject,result);
 }
 function renderCurrentProject() {
   const job = experimentData[activeProject], result = job?.result;
@@ -91,8 +82,12 @@ function renderCurrentProject() {
   const state = document.getElementById('run-state'); state.classList.toggle('running', running);
   document.getElementById('run-state-text').textContent = localRunError || (experimentReadError ? '运行记录读取失败，请稍后重试' : running ? '实验正在执行，等待真实结果' : job?.state === 'completed' ? '实验已完成' : job?.state === 'failed' ? '实验失败：' + job.error : busy ? '另一个项目正在运行，请稍候' : '尚未运行实验');
   document.getElementById('run-experiment').disabled = busy;
-  const diagram = document.getElementById('detail-protocol'), stage = running ? 1 : job?.state === 'completed' ? 2 : 0;
-  if (lastProtocolProject !== activeProject) {diagram.replaceChildren(); drawProtocol(diagram, activeProject, stage); lastProtocolProject = activeProject} else updateProtocolStage(diagram, stage);
+  const diagram = document.getElementById('detail-protocol');
+  const key = activeProject + JSON.stringify(result);
+  const frames = buildDemoFrames(activeProject,result);
+  const frame = running ? {kind:'running',phase:1} : job?.state === 'completed' ? frames.at(-1) : frames[0];
+  document.getElementById('demo-heading').textContent = demoDefinitions[activeProject].heading;
+  if (lastProtocolKey !== key) {mountProjectDemo(diagram,activeProject,result,frame,{playing:running}); lastProtocolKey = key} else updateProjectDemo(diagram,frame,{playing:running});
   renderMetrics(result);
   document.getElementById('result-time').textContent = job?.timestamp || '';
   document.getElementById('result-note').textContent = result?.note || (running ? '当前实验正在执行，完成后显示实际结果。' : job?.state === 'failed' ? '运行失败：' + job.error : '尚无运行结果。');
@@ -110,7 +105,7 @@ document.getElementById('run-experiment').onclick = async () => {
     if (!response.ok || !data.ok) throw Error(data.message || '实验启动失败');
     await readExperiments();
     if (activeProject === project) location.hash = project + '/results';
-  } catch (error) {localRunError = error.message}
+  } catch (error) {if (activeProject === project) localRunError = error.message}
   finally {requestPending = false; renderCurrentProject()}
 };
 document.getElementById('refresh').onclick = checkStatus;

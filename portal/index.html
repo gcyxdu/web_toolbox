@@ -23,7 +23,7 @@
       <button id="tab-environment" role="tab" data-tab="environment" aria-controls="view-environment">环境状态</button>
     </div>
     <section id="view-overview" class="project-view" role="tabpanel" aria-labelledby="tab-overview">
-      <div class="section-heading"><h2 id="demo-heading">角色与流程</h2></div>
+      <div class="section-heading demo-section-heading"><h2 id="demo-heading">角色与流程</h2><div class="animation-switch" role="tablist" aria-label="动画视图"><button role="tab" data-demo-view="experiment" aria-controls="detail-protocol">实验过程</button><button role="tab" data-demo-view="roles" aria-controls="detail-protocol">角色交互</button></div></div>
       <div id="detail-protocol" class="overview-protocol"></div>
       <div class="project-intro"><h2>实验配置</h2><p id="project-config"></p><a class="secondary hidden" id="detail-link" href="http://127.0.0.1:8000/" target="_blank" rel="noopener">打开 VisualFL 实验台 ↗</a></div>
     </section>
@@ -42,9 +42,9 @@
 </div>
 <dialog id="presentation" class="presentation" tabindex="-1" aria-labelledby="replay-title">
   <div class="dialog-head"><h2 id="replay-title">项目演示</h2><button class="close" id="close-presentation" aria-label="关闭演示">×</button></div>
-  <div class="replay-flow" aria-label="演示流程"><div data-stage="0"><b>01</b><span>数据与配置</span></div><i></i><div data-stage="1"><b>02</b><span>运行记录</span></div><i></i><div data-stage="2"><b>03</b><span>结果与验证</span></div></div>
+  <div class="replay-toolbar"><div class="animation-switch" role="tablist" aria-label="回放动画视图"><button role="tab" data-demo-view="experiment" aria-controls="replay-content">实验过程</button><button role="tab" data-demo-view="roles" aria-controls="replay-content">角色交互</button></div><label class="playback-speed">速度 <select id="playback-rate" aria-label="播放速度"><option value="1.5">1.5×</option><option value="1.75" selected>1.75×</option></select></label></div><div class="replay-flow" aria-label="演示流程"><div data-stage="0"><b>01</b><span>数据与配置</span></div><i></i><div data-stage="1"><b>02</b><span>运行记录</span></div><i></i><div data-stage="2"><b>03</b><span>结果与验证</span></div></div>
   <div id="replay-content" class="replay-content"></div>
   <div class="replay-controls"><span id="replay-position" aria-live="polite"></span><div><button id="replay-prev" class="secondary">上一步</button><button id="replay-play" class="primary">播放</button><button id="replay-next" class="secondary">下一步</button></div></div>
 </dialog>
-<script src="assets/project-demos.js"></script><script src="assets/presentation.js"></script><script src="assets/lab.js"></script>
+<script src="assets/project-demos.js"></script><script src="assets/demo-views.js"></script><script src="assets/presentation.js"></script><script src="assets/lab.js"></script>
 </body></html>

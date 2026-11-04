@@ -83,11 +83,11 @@ function renderCurrentProject() {
   document.getElementById('run-state-text').textContent = localRunError || (experimentReadError ? '运行记录读取失败，请稍后重试' : running ? '实验正在执行，等待真实结果' : job?.state === 'completed' ? '实验已完成' : job?.state === 'failed' ? '实验失败：' + job.error : busy ? '另一个项目正在运行，请稍候' : '尚未运行实验');
   document.getElementById('run-experiment').disabled = busy;
   const diagram = document.getElementById('detail-protocol');
-  const key = activeProject + JSON.stringify(result);
-  const frames = buildDemoFrames(activeProject,result);
+  const key = demoView + activeProject + JSON.stringify(result);
+  const frames = viewFrames(activeProject,result);
   const frame = running ? {kind:'running',phase:1} : job?.state === 'completed' ? frames.at(-1) : frames[0];
-  document.getElementById('demo-heading').textContent = demoDefinitions[activeProject].heading;
-  if (lastProtocolKey !== key) {mountProjectDemo(diagram,activeProject,result,frame,{playing:running}); lastProtocolKey = key} else updateProjectDemo(diagram,frame,{playing:running});
+  document.getElementById('demo-heading').textContent = viewDefinition(activeProject).heading;
+  if (lastProtocolKey !== key) {mountDemoView(diagram,activeProject,result,frame,{playing:running}); lastProtocolKey = key} else updateDemoView(diagram,frame,{playing:running});
   renderMetrics(result);
   document.getElementById('result-time').textContent = job?.timestamp || '';
   document.getElementById('result-note').textContent = result?.note || (running ? '当前实验正在执行，完成后显示实际结果。' : job?.state === 'failed' ? '运行失败：' + job.error : '尚无运行结果。');

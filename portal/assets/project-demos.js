@@ -16,7 +16,7 @@ function projectMetrics(id,result,frame){
   }
   if(id==='visualfl'){
     const round=frame?.kind==='aggregate'?frame.record:null;
-    return [['全局测试准确率',round?metricNumber(round.accuracy*100,2)+'%':metricNumber(result.accuracy,2)+'%'],['全局测试损失',metricNumber(round?.loss??result.loss_final,4)],['已完成聚合',String(round?.round??result.rounds??'未记录')+' 轮'],['参与客户端',result.client_count==null?'未记录':String(result.client_count)+' 个']];
+    return [['全局测试准确率',Number.isFinite(round?.accuracy??result.accuracy)?metricNumber(round?round.accuracy*100:result.accuracy,2)+'%':'未记录'],['全局测试损失',metricNumber(round?.loss??result.loss_final,4)],['已完成聚合',Number.isFinite(round?.round??result.rounds)?String(round?.round??result.rounds)+' 轮':'未记录'],['参与客户端',result.client_count==null?'未记录':String(result.client_count)+' 个']];
   }
   if(id==='tee')return [['精确率 · 标签 1',result.precision==null?'未记录':metricNumber(result.precision,2)+'%'],['召回率 · 标签 1',result.recall==null?'未记录':metricNumber(result.recall,2)+'%'],['F1 · 标签 1',result.f1==null?'未记录':metricNumber(result.f1,2)+'%'],['两种预测实现核对',result.prediction_agreement_count==null?'未记录':result.prediction_agreement_count+' / '+result.samples]];
   return [['明密文输出核对',result.correctness===true?'一致':result.correctness===false?'不一致':'未验证'],['输出绝对误差',metricNumber(result.absolute_error)],['扩展树节点',metricNumber(result.expanded_nodes,0)],['端到端时间',metricTime(result.duration_ms)]];
@@ -47,7 +47,7 @@ function makeLineChart(values,label,{xValues,percent=false}={}){
 function makeConfusionMatrix(result){
   const wrap=document.createElement('div');wrap.className='confusion-panel';appendText(wrap,'h3','留出测试集 · 混淆矩阵');
   const table=document.createElement('table');table.className='confusion-table';const head=document.createElement('thead'),tr=document.createElement('tr');['真实 / 预测','预测 0','预测 1'].forEach(text=>appendText(tr,'th',text));head.append(tr);table.append(head);const body=document.createElement('tbody');
-  [0,1].forEach(i=>{const row=document.createElement('tr');appendText(row,'th','真实 '+i);[0,1].forEach(j=>{const cell=appendText(row,'td',result?.confusion_matrix?.[i]?.[j]??'未记录');cell.className=i===j?'matrix-correct':'matrix-error'});body.append(row)});table.append(body);wrap.append(table);return wrap;
+  [0,1].forEach(i=>{const row=document.createElement('tr');appendText(row,'th','真实 '+i);[0,1].forEach(j=>{const cell=appendText(row,'td',result?.confusion_matrix?.[i]?.[j]??'未记录');cell.dataset.measuredCount=result?.confusion_matrix?.[i]?.[j]??'未记录';cell.className=i===j?'matrix-correct':'matrix-error'});body.append(row)});table.append(body);wrap.append(table);return wrap;
 }
 function mountProjectDemo(container,id,result,frame,{playing=false}={}){
   container.replaceChildren();container.dataset.demo=id;container._demoResult=result;container._demoProject=id;container.classList.add('project-demo');
@@ -69,12 +69,23 @@ function updateProjectDemo(container,frame,{playing=false}={}){
     container.querySelector('.global-round').textContent=(round??0)+' / '+(result?.rounds??5)+' 轮';
     container.querySelector('.global-status').textContent=frame.phase===0?'客户端数据':frame.kind==='aggregate'?'聚合记录回放':'全局评估';
     const accuracy=frame.kind==='aggregate'?frame.record.accuracy*100:frame.phase===2?result?.accuracy:null;
-    container.querySelector('.global-accuracy').textContent=accuracy==null?'FedAvg · LR':'全局准确率 '+metricNumber(accuracy,2)+'%';
+    container.querySelector('.global-accuracy').textContent=accuracy==null?(result?.algorithm??'FedAvg')+' · '+(result?.model??'lr').toUpperCase():'全局准确率 '+metricNumber(accuracy,2)+'%';
     container.querySelectorAll('.client-status').forEach(el=>{el.textContent=frame.phase===0?'数据保留在客户端':frame.kind==='aggregate'?'模型更新 → 聚合':'本轮参与完成'});
   }else if(id==='tee'){
     const history=result?.loss_history||[],index=frame.kind==='loss'?frame.index:frame.phase===2?history.length-1:-1;
     container.querySelector('.regression-iteration').textContent=index>=0?'迭代 '+history[index].iteration+' · 损失 '+metricNumber(history[index].loss,4):'固定随机划分 · CPU 功能对照';
-    const chart=container.querySelector('.measured-chart');if(chart?._points&&index>=0){const [x,y]=chart._points[index];const cursor=chart.querySelector('.chart-cursor');cursor.setAttribute('cx',x);cursor.setAttribute('cy',y)}
+    const chart=container.querySelector('.measured-chart');
+    if(chart?._points){
+      // Retain the canvas and reveal only the loss samples reached in this replay step.
+      const shown=chart._points.slice(0,index+1);
+      chart.querySelector('polyline').setAttribute('points',shown.map(p=>p.join(',')).join(' '));
+      chart.querySelectorAll('[data-chart-point]').forEach(dot=>dot.setAttribute('visibility',Number(dot.dataset.chartPoint)<=index?'visible':'hidden'));
+      const cursor=chart.querySelector('.chart-cursor');cursor.setAttribute('visibility',index>=0?'visible':'hidden');
+      if(index>=0){cursor.style.transition='';const [x,y]=chart._points[index];cursor.setAttribute('cx',x);cursor.setAttribute('cy',y)}else{cursor.style.transition='none';const [x,y]=chart._points[0];cursor.setAttribute('cx',x);cursor.setAttribute('cy',y)}
+      chart.querySelector('h3').textContent=index>=0?'训练损失 · 已记录到第 '+history[index].iteration+' 次更新':'训练损失 · 等待训练步骤';
+    }
+    container.querySelectorAll('[data-measured-count]').forEach(cell=>{cell.textContent=frame.phase>=2?cell.dataset.measuredCount:'—'});
+    container.querySelector('.confusion-panel h3').textContent=frame.phase>=2?'留出测试集 · 混淆矩阵':'混淆矩阵 · 等待预测步骤';
     container.querySelector('.prediction-check').textContent=frame.kind==='verify'?result?.prediction_agreement_count!=null?'逐项预测 = 向量化预测 · '+result.prediction_agreement_count+'/'+result.samples:'尚未取得实现核对记录':frame.kind==='predict'?'留出测试集准确率 '+metricNumber(result?.accuracy,2)+'%':'仅使用训练集更新参数';
   }else{
     container.querySelector('.lane-plain .output-value').textContent=frame.phase>=1?result?.plaintext_result??'—':'—';

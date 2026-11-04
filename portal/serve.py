@@ -89,6 +89,12 @@ class Handler(SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=str(ROOT), **kwargs)
 
+    def end_headers(self):
+        # Local UI files change during development; do not mix cached scripts and styles.
+        if not urlparse(self.path).path.startswith('/api/'):
+            self.send_header('Cache-Control', 'no-store, max-age=0')
+        super().end_headers()
+
     def log_message(self, fmt, *args):
         sys_stderr = __import__("sys").stderr
         sys_stderr.write("%s - %s\n" % (self.address_string(), fmt % args))
@@ -107,6 +113,10 @@ class Handler(SimpleHTTPRequestHandler):
         if parsed.path == "/api/file":
             self._file(parsed)
             return
+        # A stale conditional request must not retain an older UI bundle.
+        for header in ('If-Modified-Since', 'If-None-Match'):
+            if header in self.headers:
+                del self.headers[header]
         return super().do_GET()
 
     def do_POST(self):

@@ -1,8 +1,8 @@
 const demoDefinitions = {
-  sgboost: {title:'SGBoost', heading:'纵向协作与逐轮建树', phases:['数据协作','迭代建树','模型评估'], inputs:'Credit-4 示例数据；CSP、组织方和数据方三个 Java 进程协同训练。', scope:'评估准确率与训练计时来自 Organizer 日志；图中的小树表示训练轮次，不是导出的真实树结构。'},
-  visualfl: {title:'VisualFL', heading:'客户端训练与全局模型聚合', phases:['客户端数据','模型聚合','全局评估'], inputs:'Iris · 3 个客户端 · FedAvg · 5 轮 · 无攻击；客户端样本数和逐轮指标取自运行事件。', scope:'客户端与样本数来自实测事件；流动连线为过程回放。当前没有接入隐私保护协议。'},
-  tee: {title:'逻辑回归 CPU 对照（非 SGX）', heading:'损失收敛与预测核对', phases:['数据划分','梯度下降','预测验证'], inputs:'原 RMT_V Breast 数据，固定 70%/30% 划分，600 次梯度下降；当前在 CPU 上执行。', scope:'混淆矩阵来自留出测试集；实现核对是向量化与逐项预测对照，不能当作 SGX 或可验证计算证明。'},
-  kangaroo: {title:'Kangaroo', heading:'明文基线与密态推理双通道', phases:['示例输入','密态计算','解密核对'], inputs:'原 correctness 示例的单个 Iris 查询；在同一进程中完成 SEAL 密态推理与明文基线核对。', scope:'明文路径来自示例日志，仅用于解释基线；不表示服务器可看到密文查询的明文。端到端时间包含初始化。'}
+  sgboost: {title:'SGBoost', heading:'纵向协作与逐轮建树', phases:['数据协作','迭代建树','模型评估'], inputs:'Credit-4 · CSP / Organizer / DataOwner 三方协同训练。', scope:'评估准确率与训练计时来自 Organizer 日志；图中的小树表示训练轮次，不是导出的真实树结构。'},
+  visualfl: {title:'VisualFL', heading:'客户端训练与全局模型聚合', phases:['客户端数据','模型聚合','全局评估'], inputs:'Iris · FedAvg · LR · 3 个客户端 · 5 轮。', scope:'客户端与样本数来自实测事件；流动连线为过程回放。当前没有接入隐私保护协议。'},
+  tee: {title:'逻辑回归 CPU 对照（非 SGX）', heading:'损失收敛与预测核对', phases:['数据划分','梯度下降','预测验证'], inputs:'Breast · 训练/测试：70% / 30% · 600 次迭代 · CPU。', scope:'混淆矩阵来自留出测试集；实现核对是向量化与逐项预测对照，不能当作 SGX 或可验证计算证明。'},
+  kangaroo: {title:'Kangaroo', heading:'明文基线与密态推理双通道', phases:['示例输入','密态计算','解密核对'], inputs:'Iris 决策树 · Microsoft SEAL · 明文基线 / 密态推理。', scope:'明文路径来自示例日志，仅用于解释基线；不表示服务器可看到密文查询的明文。端到端时间包含初始化。'}
 };
 function appendText(parent,tag,text,className){const el=document.createElement(tag);el.textContent=text;if(className)el.className=className;parent.append(el);return el}
 function metricNumber(value,digits=3){return Number.isFinite(value)?value.toLocaleString('en-US',{maximumFractionDigits:digits,useGrouping:false}):'未记录'}
@@ -144,7 +144,7 @@ function renderProjectEvidence(parent,id,result){
   }
   if(id==='kangaroo'){
     const outputs=document.createElement('div');outputs.className='verified-outputs';appendText(outputs,'span','明文输出');appendText(outputs,'strong',result.plaintext_result??'—');appendText(outputs,'span','密文输出');appendText(outputs,'strong',result.ciphertext_result??'—');grid.append(outputs);
-    appendText(parent,'p','明文基线计时 '+metricTime(result.plaintext_ms)+' · 完整密态示例端到端 '+metricTime(result.duration_ms)+'；计时范围不同，不计算加速比。','timing-detail');
+    appendText(parent,'p','明文基线计时 '+metricTime(result.plaintext_ms)+' · 完整密态示例端到端 '+metricTime(result.duration_ms)+'。','timing-detail');
   }
   parent.append(grid);
 }

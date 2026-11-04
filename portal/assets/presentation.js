@@ -25,7 +25,6 @@ function showReplay() {
         createMetricCards(metrics,projectMetrics(replayProject,replayResult,frame)); copy.append(metrics);
       }
       if (frame.kind === 'loss') {const record = replayResult.loss_history[frame.index]; appendText(copy,'p','第 ' + record.iteration + ' 次参数更新后的训练损失：' + metricNumber(record.loss,6))}
-      if (frame.phase === 2) appendText(copy,'p',demoView==='roles'?roleDefinitions[replayProject].scope:definition.scope);
     } else appendText(copy,'p','尚无该项目的已完成记录。运行实验后可回放实际指标。');
   }
   document.getElementById('replay-prev').disabled = replayIndex === 0;

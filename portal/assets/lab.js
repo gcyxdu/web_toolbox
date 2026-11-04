@@ -8,22 +8,32 @@ let requestPending = false;
 let localRunError = '';
 let experimentReadError = false;
 const projectOrder = ['sgboost', 'visualfl', 'tee', 'kangaroo'];
+let expandedProjects = new Set();
+try {expandedProjects = new Set(JSON.parse(sessionStorage.getItem('toolbox-expanded-projects') || '[]').filter(id => projectOrder.includes(id)))} catch {}
+function updateNavigation() {
+  document.querySelectorAll('.nav-project').forEach(group => {
+    const id=group.dataset.project, selected=id===activeProject, expanded=expandedProjects.has(id);
+    group.classList.toggle('active',selected);group.classList.toggle('expanded',expanded);group.querySelector('.project-link').setAttribute('aria-expanded',String(expanded));
+    group.querySelectorAll('.nav-children a').forEach(link=>{if(selected&&link.dataset.view===activeView)link.setAttribute('aria-current','page');else link.removeAttribute('aria-current')});
+  });
+}
 const viewLabels = {overview: '项目概览', results: '实验结果', environment: '环境状态'};
 const descriptions = {
-  sgboost: {title: 'SGBoost', menu: 'SGBoost', description: '纵向联邦树模型训练', run: '运行 SGBoost 训练', help: '使用原项目 JAR 与 Credit-4 示例数据，启动 CSP、组织方和数据方三个 Java 进程。已适配本机数据路径，准确率与训练耗时读取 Organizer 日志；运行结束后清理进程。'},
-  visualfl: {title: 'VisualFL', menu: 'VisualFL', description: '联邦学习可视化实验台', run: '运行 Iris 联邦训练', help: '使用独立 Python 环境与 PyTorch CPU。默认运行 Iris、3 个客户端、5 轮 FedAvg 联邦训练；完整配置和曲线可在 VisualFL 实验台查看。当前实验没有接入隐私保护协议。'},
-  tee: {title: 'TEE 逻辑回归', menu: 'TEE 逻辑回归', description: '当前运行：CPU 功能对照（非 SGX）', run: '运行 CPU 对照', help: '原 SGX/RMT_V 构建脚本引用的 App 目录缺失，真实 TEE 执行还需要兼容的 Linux、SGX SDK、SGX SSL 和运行环境。当前脚本仅使用原目录 Breast 数据重新固定划分训练集和测试集，执行普通 CPU 逻辑回归；不是原 SGX 协议复现。'},
-  kangaroo: {title: 'Kangaroo', menu: 'Kangaroo', description: '隐私保护决策树推理', run: '运行 Iris 密文推理', help: '使用 Microsoft SEAL 4.1.2 与 GCC 构建的 Windows 适配版本，执行 correctness 目录的 Iris 单次交互式密文推理。将密文输出与明文输出比较；该结果是单个示例的一致性，不能当作分类准确率。'}
+  sgboost: {title: 'SGBoost', menu: 'SGBoost', description: '纵向联邦树模型训练', run: '运行 SGBoost 训练', help: '运行 SGBoost.jar，启动 CSP、组织方和数据方三个进程，完成 Credit-4 训练。'},
+  visualfl: {title: 'VisualFL', menu: 'VisualFL', description: '联邦学习可视化实验台', run: '运行 Iris 联邦训练', help: '点击“运行 Iris 联邦训练”执行默认配置；在 VisualFL 实验台可调整数据集、模型、聚合方法与客户端参数。'},
+  tee: {title: 'TEE 逻辑回归', menu: 'TEE 逻辑回归', description: '当前运行：CPU 功能对照（非 SGX）', run: '运行 CPU 对照', help: '点击“运行 CPU 对照”，执行 Breast 数据划分、600 次梯度下降及留出集预测。'},
+  kangaroo: {title: 'Kangaroo', menu: 'Kangaroo', description: '隐私保护决策树推理', run: '运行 Iris 密文推理', help: '点击“运行 Iris 密文推理”，加载模型，执行密文计算并对照明文输出。'}
 };
 function buildNavigation() {
   const nav = document.getElementById('project-nav');
   projectOrder.forEach(id => {
     const group = document.createElement('div'); group.className = 'nav-project'; group.dataset.project = id;
-    const link = document.createElement('a'); link.className = 'project-link'; link.href = '#' + id + '/overview';
+    const link = document.createElement('button'); link.type='button'; link.className='project-link'; link.setAttribute('aria-controls','nav-children-'+id);
+    link.onclick=()=>{if(expandedProjects.has(id))expandedProjects.delete(id);else expandedProjects.add(id);try{sessionStorage.setItem('toolbox-expanded-projects',JSON.stringify([...expandedProjects]))}catch{};updateNavigation();if(id!==activeProject)location.hash=id+'/overview'};
     const label = document.createElement('span'); label.textContent = descriptions[id].menu;
     const arrow = document.createElement('span'); arrow.className = 'nav-chevron'; arrow.textContent = '›'; arrow.setAttribute('aria-hidden', 'true');
     link.append(label, arrow); group.append(link);
-    const children = document.createElement('div'); children.className = 'nav-children';
+    const children = document.createElement('div'); children.className = 'nav-children'; children.id='nav-children-'+id;
     Object.entries(viewLabels).forEach(([view, title]) => {const child = document.createElement('a'); child.href = '#' + id + '/' + view; child.textContent = title; child.dataset.view = view; children.append(child)});
     group.append(children); nav.append(group);
   });
@@ -42,12 +52,7 @@ function applyRoute() {
   document.getElementById('project-config').textContent = demoDefinitions[activeProject].inputs;
   document.getElementById('detail-help').textContent = data.help;
   document.getElementById('detail-link').classList.toggle('hidden', activeProject !== 'visualfl');
-  document.querySelectorAll('.nav-project').forEach(group => {
-    const selected = group.dataset.project === activeProject;
-    group.classList.toggle('active', selected);
-    group.querySelector('.project-link').setAttribute('aria-expanded', String(selected));
-    group.querySelectorAll('.nav-children a').forEach(link => {if (selected && link.dataset.view === activeView) link.setAttribute('aria-current', 'page'); else link.removeAttribute('aria-current')});
-  });
+  updateNavigation();
   document.querySelectorAll('[data-tab]').forEach(tab => {const selected = tab.dataset.tab === activeView; tab.setAttribute('aria-selected', String(selected)); tab.tabIndex = selected ? 0 : -1});
   Object.keys(viewLabels).forEach(view => {document.getElementById('view-' + view).hidden = view !== activeView});
   renderCurrentProject(); renderEnvironment();
@@ -90,7 +95,7 @@ function renderCurrentProject() {
   if (lastProtocolKey !== key) {mountDemoView(diagram,activeProject,result,frame,{playing:running}); lastProtocolKey = key} else updateDemoView(diagram,frame,{playing:running});
   renderMetrics(result);
   document.getElementById('result-time').textContent = job?.timestamp || '';
-  document.getElementById('result-note').textContent = result?.note || (running ? '当前实验正在执行，完成后显示实际结果。' : job?.state === 'failed' ? '运行失败：' + job.error : '尚无运行结果。');
+  const resultNote=document.getElementById('result-note');resultNote.hidden=job?.state==='completed';resultNote.textContent=job?.state==='completed'?'':running?'实验正在运行…':job?.state==='failed'?'运行失败：'+job.error:'尚无运行结果。';
   document.getElementById('experiment-output').textContent = result ? JSON.stringify(result,null,2) : job?.error || (running ? '实验运行中…' : '尚无运行输出。');
 }
 async function readExperiments() {

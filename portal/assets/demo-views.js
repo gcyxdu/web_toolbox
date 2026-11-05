@@ -10,17 +10,17 @@ function mountRoleDiagram(parent,id,stage){
  const markerId='protocol-arrow-'+(++protocolSequence);
  const svg=document.createElementNS(ns,'svg');svg.setAttribute('viewBox','0 0 640 320');svg.setAttribute('role','img');svg.setAttribute('aria-label',data.title+'角色与流程示意');svg.classList.add('protocol-diagram');
  function el(tag,attrs,text){const node=document.createElementNS(ns,tag);for(const [k,v]of Object.entries(attrs))node.setAttribute(k,v);if(text)node.textContent=text;return node}
- const defs=el('defs',{});const marker=el('marker',{id:markerId,viewBox:'0 0 10 10',refX:8,refY:5,markerWidth:6,markerHeight:6,orient:'auto-start-reverse'});marker.append(el('path',{d:'M 0 0 L 10 5 L 0 10 z',fill:'#6c8d79'}));defs.append(marker);svg.append(defs);
+ const defs=el('defs',{});const marker=el('marker',{id:markerId,viewBox:'0 0 10 10',refX:8,refY:5,markerWidth:6,markerHeight:6,orient:'auto-start-reverse'});marker.append(el('path',{d:'M 0 0 L 10 5 L 0 10 z',fill:'#64748B'}));defs.append(marker);svg.append(defs);
  const upward={d:'M 145 227 L 290 92',x:184,y:148,angle:-43};
  const downward={d:'M 350 100 L 495 236',x:438,y:150,angle:43};
  const back={d:'M 295 112 L 155 245',x:251,y:200,angle:-43};
  const baseline={d:'M 165 263 L 475 263',x:320,y:291,angle:0};
  const edges=id==='visualfl'?[upward,back,downward]:id==='sgboost'?[upward,downward,back]:[upward,downward,baseline];
- edges.forEach((e,i)=>{svg.append(el('path',{d:e.d,fill:'none',stroke:i===stage?'#397957':'#c8d6cc','stroke-width':1.6,'data-flow-index':i,'stroke-dasharray':i===1?'6 5':'','marker-end':'url(#'+markerId+')',class:i===stage?'flow-active':''}));svg.append(el('text',{x:e.x,y:e.y,transform:`rotate(${e.angle} ${e.x} ${e.y})`,'text-anchor':'middle','data-edge-label':i,fill:i===stage?'#35684b':'#99a99d','font-size':14},data.labels[i]))});
- const positions=[[112,248],[320,65],[528,248]];positions.forEach(([x,y],i)=>{const g=el('g',{transform:`translate(${x} ${y})`,'data-node-index':i,class:i===stage?'protocol-node node-active':'protocol-node'});g.append(el('rect',{'data-node-background':'',x:-40,y:-32,width:80,height:64,rx:10,fill:i===stage?'#edf6ef':'#f8faf8',stroke:i===stage?'#86b296':'#dfe7e0'}));
- if(i===0){g.append(el('circle',{cx:-8,cy:-10,r:7,fill:'#87aa92'}));g.append(el('path',{d:'M -23 14 Q -21 -1 -8 -1 Q 5 -1 7 14',fill:'#b5ccb9'}));g.append(el('circle',{cx:12,cy:-8,r:6,fill:'#b2cab7'}));g.append(el('path',{d:'M 4 14 Q 6 2 13 1 Q 24 2 25 14',fill:'#d1e0d3'}))}
- else{[-16,-2,12].forEach(dy=>{g.append(el('rect',{x:-22,y:dy-4,width:44,height:10,rx:2,fill:'#8eac96'}));g.append(el('circle',{cx:13,cy:dy+1,r:1.5,fill:'#fff'}))})}
- g.append(el('text',{x:0,y:52,'text-anchor':'middle',fill:'#496b55','font-size':13},data.nodes[i]));svg.append(g)});parent.append(svg);
+ edges.forEach((e,i)=>{svg.append(el('path',{d:e.d,fill:'none',stroke:i===stage?'#2563EB':'#CBD5E1','stroke-width':1.6,'data-flow-index':i,'stroke-dasharray':i===1?'6 5':'','marker-end':'url(#'+markerId+')',class:i===stage?'flow-active':''}));svg.append(el('text',{x:e.x,y:e.y,transform:`rotate(${e.angle} ${e.x} ${e.y})`,'text-anchor':'middle','data-edge-label':i,fill:i===stage?'#1E3A5F':'#64748B','font-size':14},data.labels[i]))});
+ const positions=[[112,248],[320,65],[528,248]];positions.forEach(([x,y],i)=>{const g=el('g',{transform:`translate(${x} ${y})`,'data-node-index':i,class:i===stage?'protocol-node node-active':'protocol-node'});g.append(el('rect',{'data-node-background':'',x:-40,y:-32,width:80,height:64,rx:10,fill:i===stage?'#EFF6FF':'#F8FAFC',stroke:i===stage?'#93C5FD':'#E2E8F0'}));
+ if(i===0){g.append(el('circle',{cx:-8,cy:-10,r:7,fill:'#94A3B8'}));g.append(el('path',{d:'M -23 14 Q -21 -1 -8 -1 Q 5 -1 7 14',fill:'#CBD5E1'}));g.append(el('circle',{cx:12,cy:-8,r:6,fill:'#94A3B8'}));g.append(el('path',{d:'M 4 14 Q 6 2 13 1 Q 24 2 25 14',fill:'#E2E8F0'}))}
+ else{[-16,-2,12].forEach(dy=>{g.append(el('rect',{x:-22,y:dy-4,width:44,height:10,rx:2,fill:'#94A3B8'}));g.append(el('circle',{cx:13,cy:dy+1,r:1.5,fill:'#fff'}))})}
+ g.append(el('text',{x:0,y:52,'text-anchor':'middle',fill:'#334155','font-size':13},data.nodes[i]));svg.append(g)});parent.append(svg);
  const mobileRoles={sgboost:['数据参与方 → 组织方','组织方 ↔ CSP','组织方 → 数据参与方'],visualfl:['客户端 → 聚合服务器','聚合服务器 → 客户端','聚合服务器 → 评估节点'],tee:['训练数据 → CPU','训练模型 → 预测','留出数据 → 核对'],kangaroo:['查询客户端 → 密文推理','密文推理 → 核对','明文基线 → 核对']};
  const compact=document.createElement('ol');compact.className='protocol-mobile';compact.setAttribute('aria-label',data.title+'流程');
  data.labels.forEach((label,i)=>{const row=document.createElement('li');row.className=i===stage?'active':'';row.dataset.mobileStage=i;appendText(row,'b',String(i+1).padStart(2,'0'));const text=document.createElement('div');appendText(text,'strong',mobileRoles[id][i]);appendText(text,'span',label.slice(2));row.append(text);compact.append(row)});parent.append(compact); delete parent.dataset.protocolStage; updateRoleDiagram(parent,stage)
@@ -30,11 +30,11 @@ function mountRoleDiagram(parent,id,stage){
 function updateRoleDiagram(parent, stage) {
   if (parent.dataset.protocolStage === String(stage)) return;
   parent.dataset.protocolStage = stage;
-  parent.querySelectorAll('[data-flow-index]').forEach(path => {const active = Number(path.dataset.flowIndex) === stage; path.classList.toggle('flow-active', active); path.setAttribute('stroke', active ? '#397957' : '#c8d6cc')});
-  parent.querySelectorAll('[data-edge-label]').forEach(text => {text.setAttribute('fill', Number(text.dataset.edgeLabel) === stage ? '#35684b' : '#99a99d')});
+  parent.querySelectorAll('[data-flow-index]').forEach(path => {const active = Number(path.dataset.flowIndex) === stage; path.classList.toggle('flow-active', active); path.setAttribute('stroke', active ? '#2563EB' : '#CBD5E1')});
+  parent.querySelectorAll('[data-edge-label]').forEach(text => {text.setAttribute('fill', Number(text.dataset.edgeLabel) === stage ? '#1E3A5F' : '#64748B')});
   const project = parent.dataset.project;
   const activeNode = project === 'sgboost' ? [0,1,0][stage] : stage;
-  parent.querySelectorAll('[data-node-index]').forEach(node => {const active = Number(node.dataset.nodeIndex) === activeNode; node.classList.toggle('node-active', active); const background = node.querySelector('[data-node-background]'); background.setAttribute('fill', active ? '#edf6ef' : '#f8faf8'); background.setAttribute('stroke', active ? '#86b296' : '#dfe7e0')});
+  parent.querySelectorAll('[data-node-index]').forEach(node => {const active = Number(node.dataset.nodeIndex) === activeNode; node.classList.toggle('node-active', active); const background = node.querySelector('[data-node-background]'); background.setAttribute('fill', active ? '#EFF6FF' : '#F8FAFC'); background.setAttribute('stroke', active ? '#93C5FD' : '#E2E8F0')});
   parent.querySelectorAll('[data-mobile-stage]').forEach(row => row.classList.toggle('active', Number(row.dataset.mobileStage) === stage));
 }
 

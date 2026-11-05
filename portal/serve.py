@@ -63,6 +63,18 @@ SKIP_SUFFIX = {
 MAX_BYTES = 1024 * 1024
 
 
+def tcp_open(port):
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.settimeout(0.3)
+    try:
+        sock.connect(("127.0.0.1", port))
+        return True
+    except OSError:
+        return False
+    finally:
+        sock.close()
+
+
 def safe_root(mod_id):
     root = MODULES.get(mod_id)
     if root is None or not root.exists():
@@ -147,6 +159,7 @@ class Handler(SimpleHTTPRequestHandler):
             "kangaroo_build_tools": {x: bool(shutil.which(x)) for x in ("cmake", "make", "g++")},
             "kangaroo_executable": (experiments.RUNTIME/"kangaroo/examples.exe").exists(),
             "rmt_v_source": rmt.is_dir(), "rmt_v_app": (rmt / "App").is_dir(),
+            "desen_workbench": tcp_open(8352), "desen_eval": tcp_open(8470),
             "platform": __import__("sys").platform})
 
     def _qs(self, parsed):

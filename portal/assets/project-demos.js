@@ -2,7 +2,7 @@ const demoDefinitions = {
   sgboost: {title:'SGBoost', heading:'纵向协作与逐轮建树', phases:['数据协作','迭代建树','模型评估'], inputs:'Credit-4 · CSP / Organizer / DataOwner 三方协同训练。', scope:'评估准确率与训练计时来自 Organizer 日志；图中的小树表示训练轮次，不是导出的真实树结构。'},
   visualfl: {title:'VisualFL', heading:'客户端训练与全局模型聚合', phases:['客户端数据','模型聚合','全局评估'], inputs:'Iris · FedAvg · LR · 3 个客户端 · 5 轮。', scope:'客户端与样本数来自实测事件；流动连线为过程回放。当前没有接入隐私保护协议。'},
   tee: {title:'逻辑回归 CPU 对照（非 SGX）', heading:'损失收敛与预测核对', phases:['数据划分','梯度下降','预测验证'], inputs:'Breast · 训练/测试：70% / 30% · 600 次迭代 · CPU。', scope:'混淆矩阵来自留出测试集；实现核对是向量化与逐项预测对照，不能当作 SGX 或可验证计算证明。'},
-  kangaroo: {title:'Kangaroo', heading:'明文基线与密态推理双通道', phases:['示例输入','密态计算','解密核对'], inputs:'Iris 决策树 · Microsoft SEAL · 明文基线 / 密态推理。', scope:'明文路径来自示例日志，仅用于解释基线；不表示服务器可看到密文查询的明文。端到端时间包含初始化。'}
+  kangaroo: {title:'Kangaroo', heading:'明文基线与密文推理双通道', phases:['示例输入','密文计算','解密核对'], inputs:'Iris 决策树 · Microsoft SEAL · 明文基线 / 密文推理。', scope:'明文路径来自示例日志，仅用于解释基线；不表示服务器可看到密文查询的明文。端到端时间包含初始化。单次一致不是分类准确率。'}
 };
 function appendText(parent,tag,text,className){const el=document.createElement(tag);el.textContent=text;if(className)el.className=className;parent.append(el);return el}
 function metricNumber(value,digits=3){return Number.isFinite(value)?value.toLocaleString('en-US',{maximumFractionDigits:digits,useGrouping:false}):'未记录'}
@@ -28,21 +28,21 @@ function buildDemoFrames(id,result){
     const history=result?.loss_history||[],indices=[Math.floor(history.length*.25),Math.floor(history.length*.6),history.length-1];
     return [{kind:'split',phase:0,label:'训练集与留出测试集'},...[...new Set(indices)].filter(i=>i>=0&&history[i]).map(index=>({kind:'loss',phase:1,index,label:'梯度下降 · 第 '+history[index].iteration+' 次迭代'})),{kind:'predict',phase:2,label:'留出测试集预测'},{kind:'verify',phase:2,label:'预测实现与混淆矩阵核对'}];
   }
-  return [{kind:'prepare',phase:0,label:'同一示例查询'}, {kind:'cipher',phase:1,label:'SEAL 密态推理'}, {kind:'compare',phase:2,label:'解密输出与明文基线核对'}];
+  return [{kind:'prepare',phase:0,label:'同一示例查询'}, {kind:'cipher',phase:1,label:'SEAL 密文推理'}, {kind:'compare',phase:2,label:'解密输出与明文基线核对'}];
 }
-function createMetricCards(parent,items){parent.replaceChildren();items.forEach(([label,value])=>{const box=document.createElement('div');box.className='metric-box';appendText(box,'span',label);appendText(box,'strong',value);parent.append(box)})}
+function createMetricCards(parent,items){parent.replaceChildren();items.forEach(([label,value])=>{const box=document.createElement('div');box.className='metric-box';appendText(box,'span',label);const missing=/未记录|未探测|不适用/.test(String(value));appendText(box,'strong',value,missing?'is-missing':'');parent.append(box)})}
 function svgElement(tag,attributes={},text){const node=document.createElementNS('http://www.w3.org/2000/svg',tag);Object.entries(attributes).forEach(([key,value])=>node.setAttribute(key,value));if(text!=null)node.textContent=text;return node}
 function makeLineChart(values,label,{xValues,percent=false}={}){
   const wrap=document.createElement('div');wrap.className='measured-chart';appendText(wrap,'h3',label);
   if(!values?.length){appendText(wrap,'p','运行后显示实际记录。','empty-chart');return wrap}
   const svg=svgElement('svg',{viewBox:'0 0 600 215',role:'img','aria-label':label});
   const max=percent?100:Math.max(...values)*1.12||1,left=50,right=570,top=15,bottom=165;
-  [0,.5,1].forEach(ratio=>{const y=bottom-ratio*(bottom-top);svg.append(svgElement('line',{x1:left,x2:right,y1:y,y2:y,stroke:'#edf1ee'}));svg.append(svgElement('text',{x:40,y:y+4,'text-anchor':'end',fill:'#8a9a90','font-size':12},metricNumber(max*ratio,percent?0:3)))});
+  [0,.5,1].forEach(ratio=>{const y=bottom-ratio*(bottom-top);svg.append(svgElement('line',{x1:left,x2:right,y1:y,y2:y,stroke:'#EEF2F6'}));svg.append(svgElement('text',{x:40,y:y+4,'text-anchor':'end',fill:'#94A3B8','font-size':12},metricNumber(max*ratio,percent?0:3)))});
   const points=values.map((value,i)=>[left+(right-left)*i/Math.max(1,values.length-1),bottom-value/max*(bottom-top)]);
-  const line=svgElement('polyline',{points:points.map(p=>p.join(',')).join(' '),fill:'none',stroke:'#579777','stroke-width':2.2});svg.append(line);
-  points.forEach(([x,y],i)=>{const dot=svgElement('circle',{cx:x,cy:y,r:3,fill:'#579777','data-chart-point':i});dot.append(svgElement('title',{},(xValues?.[i]??i+1)+': '+metricNumber(values[i],4)));svg.append(dot)});
-  const tickIndices=[...new Set([0,Math.floor((values.length-1)/2),values.length-1])];tickIndices.forEach(i=>svg.append(svgElement('text',{x:points[i][0],y:190,'text-anchor':'middle',fill:'#8a9a90','font-size':12},String(xValues?.[i]??i+1))));
-  const cursor=svgElement('circle',{cx:points.at(-1)[0],cy:points.at(-1)[1],r:5,fill:'#fff',stroke:'#367b58','stroke-width':2,class:'chart-cursor'});svg.append(cursor);wrap.append(svg);wrap._points=points;return wrap;
+  const line=svgElement('polyline',{points:points.map(p=>p.join(',')).join(' '),fill:'none',stroke:'#2563EB','stroke-width':2.2});svg.append(line);
+  points.forEach(([x,y],i)=>{const dot=svgElement('circle',{cx:x,cy:y,r:3,fill:'#2563EB','data-chart-point':i});dot.append(svgElement('title',{},(xValues?.[i]??i+1)+': '+metricNumber(values[i],4)));svg.append(dot)});
+  const tickIndices=[...new Set([0,Math.floor((values.length-1)/2),values.length-1])];tickIndices.forEach(i=>svg.append(svgElement('text',{x:points[i][0],y:190,'text-anchor':'middle',fill:'#94A3B8','font-size':12},String(xValues?.[i]??i+1))));
+  const cursor=svgElement('circle',{cx:points.at(-1)[0],cy:points.at(-1)[1],r:5,fill:'#fff',stroke:'#2563EB','stroke-width':2,class:'chart-cursor'});svg.append(cursor);wrap.append(svg);wrap._points=points;return wrap;
 }
 function makeConfusionMatrix(result){
   const wrap=document.createElement('div');wrap.className='confusion-panel';appendText(wrap,'h3','留出测试集 · 混淆矩阵');
@@ -125,7 +125,7 @@ function mountRegression(parent,result){
 }
 function mountKangaroo(parent,result){
   const dual=document.createElement('div');dual.className='kangaroo-dual';
-  ['plain','cipher'].forEach(type=>{const lane=document.createElement('div');lane.className='inference-lane lane-'+type;appendText(lane,'strong',type==='plain'?'明文基线':'密态推理','lane-title');const pipeline=document.createElement('div');pipeline.className='inference-pipeline';
+  ['plain','cipher'].forEach(type=>{const lane=document.createElement('div');lane.className='inference-lane lane-'+type;appendText(lane,'strong',type==='plain'?'明文基线':'密文推理','lane-title');const pipeline=document.createElement('div');pipeline.className='inference-pipeline';
     const labels=type==='plain'?(result?.reference_path?.length?result.reference_path.map(p=>'节点 '+p.node):['明文决策树']):['密文向量','安全比较','路径求和'];
     labels.forEach((label,i)=>{const node=document.createElement('div');node.className='inference-node';appendText(node,'span',label);if(type==='plain'&&result?.reference_path?.[i])appendText(node,'small','x='+result.reference_path[i].input+' · y='+result.reference_path[i].threshold);pipeline.append(node);if(i<labels.length-1){const wire=document.createElement('i');wire.className='pipeline-wire';pipeline.append(wire)}});lane.append(pipeline);const output=document.createElement('div');output.className='lane-output';appendText(output,'span',type==='plain'?'明文输出':'解密输出');appendText(output,'strong','—','output-value');lane.append(output);dual.append(lane)});parent.append(dual);appendText(parent,'p','','comparison-result');
   if(result?.expanded_nodes!=null)appendText(parent,'p','扩展树 '+result.expanded_nodes+' 个节点 · 其中虚拟节点 '+result.virtual_nodes,'tree-padding');
@@ -144,7 +144,7 @@ function renderProjectEvidence(parent,id,result){
   }
   if(id==='kangaroo'){
     const outputs=document.createElement('div');outputs.className='verified-outputs';appendText(outputs,'span','明文输出');appendText(outputs,'strong',result.plaintext_result??'—');appendText(outputs,'span','密文输出');appendText(outputs,'strong',result.ciphertext_result??'—');grid.append(outputs);
-    appendText(parent,'p','明文基线计时 '+metricTime(result.plaintext_ms)+' · 完整密态示例端到端 '+metricTime(result.duration_ms)+'。','timing-detail');
+    appendText(parent,'p','明文基线计时 '+metricTime(result.plaintext_ms)+' · 完整密文示例端到端 '+metricTime(result.duration_ms)+'。单次一致不是分类准确率。','timing-detail');
   }
   parent.append(grid);
 }

@@ -1,28 +1,14 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>源码</title>
-  <link rel="icon" href="./favicon.svg">
-  <link rel="stylesheet" href="./assets/app.css">
+  <title>数据安全融合</title>
+  <script>
+    const id = new URLSearchParams(location.search).get("id") || "";
+    const lab = {sgboost: "sgboost/overview", kangaroo: "kangaroo/overview", visualfl: "visualfl/overview", tee: "tee/overview"};
+    const archive = {byte: "archive/byte", ttsdc: "archive/ttsdc", "seccom-tee": "archive/seccom-tee", pqcp: "archive/pqcp"};
+    location.replace("./index.html#" + (lab[id] || archive[id] || "archive"));
+  </script>
 </head>
-<body>
-  <header class="top">
-    <a class="logo" href="./index.html"><span class="mark" aria-hidden="true"></span>联合成果</a>
-    <nav class="nav">
-      <a href="./desen.html">脱敏</a>
-      <a href="./visualfl.html">VisualFL</a>
-      <a class="is-on" href="./toolkit.html">工具集</a>
-    </nav>
-  </header>
-  <main class="stage stage--code">
-    <aside class="tree" id="tree"></aside>
-    <section class="view">
-      <div class="file-name" id="name"></div>
-      <pre id="code"></pre>
-    </section>
-  </main>
-  <script src="./assets/code.js"></script>
-</body>
+<body><p><a href="./index.html#archive">进入数据安全融合</a></p></body>
 </html>
